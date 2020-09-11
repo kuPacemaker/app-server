@@ -1,0 +1,4 @@
+
+class statisticsMaker():
+    def makeStatistics():
+
