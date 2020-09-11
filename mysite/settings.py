@@ -122,10 +122,10 @@ STATIC_URL = '/static/'
 
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = '587'
-EMAIL_HOST_USER = 'smc5407@gmail.com'
-EMAIL_HOST_PASSWORD = 'msc583446255646'
+EMAIL_HOST_USER = 'ku.pacemaker@gmail.com'
+EMAIL_HOST_PASSWORD = '!Q@W#E$R%T'
 EMAIL_USE_TLS = True
-DEAULT_FROM_EMAIL = 'smc5407@naver.com'
+DEAULT_FROM_EMAIL = 'ku.pacemaker@gmail.com'
 
 BROKER_URL = 'redis://localhost:6379/0'
 CELERY_RESULT_BAKCEND = 'redis://localhost:6379/0'
