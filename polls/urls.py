@@ -18,7 +18,5 @@ account_url_patterns = [
     path('modifyAccountInfo/<str:uid>/<str:uname>/<str:upw>/<str:newpw>/',accountManager.modifyAccountInfo, name='modifyAccountInfo'),
 ]
 
-
-
 #urlpatterns = []
 urlpatterns += account_url_patterns
