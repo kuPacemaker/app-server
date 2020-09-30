@@ -2,6 +2,8 @@ from django.urls import path
 
 from . import views
 from .AccountManager.AccountManager import accountManager
+from .FileManager.BKDManager.BKDManager import bkdManager
+from .QGAPI.QGAPI import qgapi
 
 app_name = 'polls'
 urlpatterns = [
@@ -18,5 +20,18 @@ account_url_patterns = [
     path('modifyAccountInfo/<str:uid>/<str:uname>/<str:upw>/<str:newpw>/',accountManager.modifyAccountInfo, name='modifyAccountInfo'),
 ]
 
+bkd_url_patterns = [
+    path('inquireIntoBKD/<str:title>/',bkdManager.inquireIntoBKD, name='inquireIntoBKD'),
+    path('makeBKD/',bkdManager.makeBKD, name='makeBKD'),
+    path('saveBKD/<int:bkd_id>/<str:title>/<str:body>/',bkdManager.saveBKD, name='saveBKD'),
+    path('deleteBKD/<str:title>/',bkdManager.deleteBKD, name='deleteBKD'),
+]
+
+qg_url_patterns = [
+    path('makeProblem/<int:bkd_id>/',qgapi.questionGenerate, name='makeProblem'),
+]
+
 #urlpatterns = []
 urlpatterns += account_url_patterns
+urlpatterns += bkd_url_patterns
+urlpatterns += qg_url_patterns

@@ -39,7 +39,7 @@ class Choice(models.Model):
         return self.choice_text
 
 class User(AbstractUser):
-    user_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    url_id = models.UUIDField(unique=True, default=uuid.uuid4, editable=False)
     username = models.CharField(unique=True, default='', max_length=30)
 
     @receiver(post_save, sender = settings.AUTH_USER_MODEL)
@@ -47,32 +47,16 @@ class User(AbstractUser):
         if created:
             Token.objects.create(user=instance)
 
+
+ 
+class BKD(models.Model):
+    url_id = models.UUIDField(unique=True, default=uuid.uuid4, editable=False)
+    title = models.CharField(max_length=20)
+    body = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
 '''
-class User(models.Model):
-    user_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    email = models.CharField(max_length=30)
-    password = models.CharField(max_length=30)
-    name = models.CharField(max_length=20)
-
-    def __str__(self):
-        return self.name
-
-
-
-class User(models.Model):
-    user_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    email = models.CharField(max_length=20, editable=False)
-    password = models.CharField(max_length=20)
-    name = models.CharField(max_length=20)
-
-class BKDGroup(models.Model):
-    owner_id = models.ForeignKey('user_id.User', on_delete=models.CASCADE)
-    bkdg_id = models.AutoField(editable=False)
-    name = models.CharField(max_length=20)
-    
-    class Meta:
-        unique_together = [['owner_id', 'bkdg_id']] #temporary key
-    
 class BKD(models.Model):
     bkd_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     owner_id = models.ForeignKey('user_id.User', on_delete=models.CASCADE)

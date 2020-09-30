@@ -12,7 +12,7 @@ class accountManager():
             if(user.password == upw):
                 #DB에 저장된 email과 쌍을 이루는 password가 upw와 일치함
                 print("LOGIN SUCCESS")
-                token = Token.objects.get(user_id = user.user_id)
+                token = Token.objects.get(user_id = user.id)
                 print("token :",token)
             else:
                 #password와 upw가 일치하지 않음
@@ -34,8 +34,8 @@ class accountManager():
             #존재하지 않으므로 사용 가능함
             user = User.objects.create(username = uid, password = upw, first_name = uname)
             print("SIGN_IN SUCCESS")
-            token = Token.objects.get(user_id = user.user_id)
-            print("token : ",token)
+            token = Token.objects.get(user_id = user.id)
+            print("token :",token)
 
         latest_question_list = Question.objects.order_by('-pub_date')[:5]
         context = {'latest_question_list':latest_question_list}
