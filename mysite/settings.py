@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework.authtoken',
+    'rest_framework',
 ]
     
 MIDDLEWARE = [
@@ -82,7 +83,7 @@ DATABASES = {
         'NAME': 'kupacemaker',
         'USER': 'kupacemaker',
         'PASSWORD': 'msc583446',
-        'HOST': 'localhost',
+        'HOST': '172.19.0.2',
         'PORT': '3306',
     }
 }

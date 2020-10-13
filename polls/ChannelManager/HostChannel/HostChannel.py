@@ -1,4 +1,6 @@
 from .ChannelJoinCodeGenerator.ChannelJoinCodeGenerator import channelJoinCodeGenerator
+from django.http import JsonResponse
+from polls.models import *
 
 class hostChannel():
     def ChannelJoinCodeGenerate():
@@ -8,11 +10,18 @@ class hostChannel():
 
     def excludeChannelMember():
 
-    def makeChapter():
+    def createUnit(request, token):
+        user_token = Token.objects.filter(token = token)
+        if(user_token):
+            #token 존재
+            print("TOKEN IS ExIST")
+        else:
+            #token 미존재
+            print("TOKEN IS NOT EXIST")
 
-    def editChapter():
+    def editUnit(request, token, cid, cname, cdesc):
 
-    def deleteChapter():
+    def deleteUnit(request, token, cid):
 
     def registerBKD():
 

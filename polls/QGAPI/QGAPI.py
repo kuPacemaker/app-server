@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from polls.models import BKD, Question
 from rest_framework.parsers import JSONParser
+from .ChoiceProblemGenerator.ChoiceProblemGenerator import choiceProblemGenerator
 import requests
 import json
 
@@ -12,9 +13,15 @@ class qgapi():
         data = {'bkd' : bkd.body}
         res = requests.post(URL, data=data)
         content = res.text
-        print(res)
-        print(content)
-        print(json.loads(content))
+        nouns = []
+        aqset = []
+        question_data = json.loads(content)
+        length = len(question_data['passages'])
+        for i in range(length):
+            nouns += question_data['passages'][i]['nouns']
+            aqset += question_data['passages'][i]['aqset']
+    
+        choiceProblemGenerator.choiceProblemGenerator(nouns,aqset)
 
         latest_question_list = Question.objects.order_by('-pub_date')[:5]
         context = {'latest_question_list':latest_question_list}

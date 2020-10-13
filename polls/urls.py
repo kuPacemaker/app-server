@@ -3,6 +3,7 @@ from django.urls import path
 from . import views
 from .AccountManager.AccountManager import accountManager
 from .FileManager.BKDManager.BKDManager import bkdManager
+from .ChannelManager.ChannelManager import channelManager
 from .QGAPI.QGAPI import qgapi
 
 app_name = 'polls'
@@ -14,24 +15,31 @@ urlpatterns = [
 ]
 
 account_url_patterns = [
-    path('login/<str:uid>/<str:upw>/',accountManager.login, name='login'),
-    path('signIn/<str:uid>/<str:upw>/<str:uname>/',accountManager.signIn, name='signIn'),
+    path('signIn/<str:uid>/<str:upw>/',accountManager.signIn, name='signIn'),
+    path('signUp/<str:uid>/<str:upw>/<str:uname>/',accountManager.signUp, name='signUp'),
     path('findAccount/<str:uid>/',accountManager.findAccount, name='findAccount'),
-    path('modifyAccountInfo/<str:uid>/<str:uname>/<str:upw>/<str:newpw>/',accountManager.modifyAccountInfo, name='modifyAccountInfo'),
+    path('modifyAccount/<str:uid>/<str:uname>/<str:upw>/<str:newpw>/',accountManager.modifyAccount, name='modifyAccount'),
 ]
 
 bkd_url_patterns = [
-    path('inquireIntoBKD/<str:title>/',bkdManager.inquireIntoBKD, name='inquireIntoBKD'),
-    path('makeBKD/',bkdManager.makeBKD, name='makeBKD'),
-    path('saveBKD/<int:bkd_id>/<str:title>/<str:body>/',bkdManager.saveBKD, name='saveBKD'),
+    path('requestBKD/<str:title>/',bkdManager.requestBKD, name='requestBKD'),
+    path('createBKD/',bkdManager.createBKD, name='createBKD'),
+    path('editBKD/<int:bkd_id>/<str:title>/<str:body>/',bkdManager.editBKD, name='editBKD'),
     path('deleteBKD/<str:title>/',bkdManager.deleteBKD, name='deleteBKD'),
 ]
 
 qg_url_patterns = [
-    path('makeProblem/<int:bkd_id>/',qgapi.questionGenerate, name='makeProblem'),
+    path('questionGenerate/<int:bkd_id>/',qgapi.questionGenerate, name='questionGenerate'),
+]
+
+channel_url_patterns = [
+    path('createChannel/<str:token>/',channelManager.createChannel, name='createChannel'),
+    path('deleteChannel/<str:token>/<uuid:channel_id>/',channelManager.deleteChannel, name='deleteChannel'),
+    path('editChannel/<str:token>/<uuid:channel_id>/<str:channel_name>/<str:channel_desc>/',channelManager.editChannel, name='editChannel'),
 ]
 
 #urlpatterns = []
 urlpatterns += account_url_patterns
 urlpatterns += bkd_url_patterns
 urlpatterns += qg_url_patterns
+urlpatterns += channel_url_patterns

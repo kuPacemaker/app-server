@@ -1,8 +1,10 @@
 from django.shortcuts import render
+from django.http import JsonResponse
 from polls.models import BKD, Question
+from polls.serializers import BKDSerializer, BKDIDSerializer
 
 class bkdManager():
-    def inquireIntoBKD(request, title):
+    def requestBKD(request, title):
         bkd = BKD.objects.filter(title = title)
         if(bkd):
             #bkd 존재
@@ -13,25 +15,29 @@ class bkdManager():
             #bkd 미존재
             print("BKD IS NOT EXIST.")
 
-        latest_question_list = Question.objects.order_by('-pub_date')[:5]
-        context = {'latest_question_list':latest_question_list}
-        return render(request, 'polls/index.html',context)
-            
-    def makeBKD(request):
+        bkd = BKD.objects.filter(title = title)
+        serializer = BKDSerializer(bkd, many=True)
+
+        return JsonResponse(serializer.data[0], safe=False)
+
+    def createBKD(request):
         bkd = BKD.objects.create(title = '', body = '')
         #빈 BKD 생성
-        print(bkd.id)
-        #해당 BKD의 id client로 보냄
+        bkd_id = bkd.id
+        bkd = BKD.objects.filter(id = bkd_id)
+        serializer = BKDIDSerializer(bkd, many=True)
+        #해당 ID Client로 보냄
+        
+        return JsonResponse(serializer.data[0], safe=True)
 
-        latest_question_list = Question.objects.order_by('-pub_date')[:5]
-        context = {'latest_question_list':latest_question_list}
-        return render(request, 'polls/index.html',context)
-
-    def saveBKD(request, bkd_id, title, body):
+    def editBKD(request, bkd_id, title, body):
+        print(body)
         bkd = BKD.objects.get(id = bkd_id)
         bkd.title = title
         bkd.body = body
         bkd.save()
+
+        print(bkd.body)
 
         latest_question_list = Question.objects.order_by('-pub_date')[:5]
         context = {'latest_question_list':latest_question_list}

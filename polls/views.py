@@ -7,8 +7,7 @@ from django.template import loader
 from django.urls import reverse
 from django.views import generic
 from django.utils import timezone
-
-from .models import Question, Choice
+from .models import Question, Choice, User
 
 # Create your views here.
 
@@ -29,7 +28,6 @@ class DetailView(generic.DetailView):
 class ResultsView(generic.DetailView):
     model = Question
     template_name = 'polls/results.html'
-
 
 '''
 def index(request):

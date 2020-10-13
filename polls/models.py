@@ -47,14 +47,107 @@ class User(AbstractUser):
         if created:
             Token.objects.create(user=instance)
 
-
- 
 class BKD(models.Model):
     url_id = models.UUIDField(unique=True, default=uuid.uuid4, editable=False)
     title = models.CharField(max_length=20)
     body = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+class Channel(models.Model):
+    url_id = models.UUIDField(unique=True, default=uuid.uuid4, editable=False)
+    name = models.CharField(max_length=20)
+    description = models.CharField(max_length=100, blank=True)
+    accesspath = models.CharField(max_length=20, null=True)
+    
+class Unit(models.Model):
+    url_id = models.UUIDField(unique=True, default=uuid.uuid4, editable=False)
+    channel = models.ForeignKey(Channel, db_column='ch_id', on_delete=models.CASCADE)
+    index = models.IntegerField()
+    name = models.CharField(max_length=20)
+    bkd = models.ForeignKey(BKD, db_column='bkd_id', on_delete=models.SET_NULL, null=True)
+    opened = models.BooleanField(default=False)
+
+    class Meta:
+        unique_together = [['channel', 'index']]
+
+class QASet(models.Model):
+    url_id = models.UUIDField(unique=True, default=uuid.uuid4, editable=False)
+    valid = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+class QAPair(models.Model):
+    url_id = models.UUIDField(unique=True, default=uuid.uuid4, editable=False)
+    qaset = models.ForeignKey(QASet, db_column='set_id', on_delete=models.CASCADE)
+    index = models.IntegerField()
+    question = models.CharField(max_length=150)
+    answer = models.CharField(max_length=20)
+    answer_set = models.CharField(max_length=100)
+    
+    class Meta:
+        unique_together = [['qaset', 'index']]
+
+class TestPlan(models.Model):
+    url_id = models.UUIDField(unique=True, default=uuid.uuid4, editable=False)
+    qaset = models.ForeignKey(QASet, db_column='set_id', on_delete=models.CASCADE)
+    que_number = models.IntegerField(null=True)
+    release_time = models.DateTimeField(null=True)
+    released = models.BooleanField(default=False)
+    end_time = models.DateTimeField(null=True)
+    ended = models.BooleanField(default=False)
+
+class TestSet(models.Model):
+    url_id = models.UUIDField(unique=True, default=uuid.uuid4, editable=False)
+    user = models.ForeignKey(User, db_column='user_id', on_delete=models.CASCADE)
+    test = models.ForeignKey(TestPlan, db_column='test_id', on_delete=models.CASCADE)
+    received = models.BooleanField(default=False)
+    submitted = models.BooleanField(default=False)
+    score = models.FloatField(default=0.0)
+
+    class Meta:
+        unique_together = [['user', 'test']]
+
+class TestPair(models.Model):
+    url_id = models.UUIDField(unique=True, default=uuid.uuid4, editable=False)
+    tset = models.ForeignKey(TestSet, db_column='tset_id', on_delete=models.CASCADE)
+    pair_id = models.ForeignKey(QAPair, db_column='pair_id', on_delete=models.CASCADE)
+    user_answer = models.CharField(max_length=20, blank=True)
+    correct = models.BooleanField(default=False)
+
+class News(models.Model):
+    body = models.CharField(max_length=100)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+#Relationship
+class Host(models.Model):
+    user = models.ForeignKey(User, db_column='user_id', on_delete=models.CASCADE)
+    channel = models.ForeignKey(Channel, db_column='ch_id', on_delete=models.CASCADE)
+
+class Guest(models.Model):
+    user = models.ForeignKey(User, db_column='user_id', on_delete=models.CASCADE)
+    channel = models.ForeignKey(Channel, db_column='ch_id', on_delete=models.CASCADE)
+
+class BKDOwner(models.Model):
+    user = models.ForeignKey(User, db_column='user_id', on_delete=models.CASCADE)
+    bkd = models.OneToOneField(BKD, db_column='bkd_id', on_delete=models.CASCADE)
+
+class BKDToQA(models.Model):
+    bkd = models.ForeignKey(BKD, db_column='bkd_id', on_delete=models.CASCADE)
+    qaset = models.OneToOneField(QASet, db_column='set_id', on_delete=models.CASCADE)
+
+class UnitQA(models.Model):
+    qaset = models.OneToOneField(QASet, db_column='set_id', on_delete=models.CASCADE)
+    unit = models.OneToOneField(Unit, db_column='unit_id', on_delete=models.CASCADE)
+
+class UnitTest(models.Model):
+    test = models.OneToOneField(TestPlan, db_column='test_id', on_delete=models.CASCADE)
+    unit = models.OneToOneField(Unit, db_column='unit_id', on_delete=models.CASCADE)
+
+class UserNews(models.Model):
+    user = models.ForeignKey(User, db_column='user_id', on_delete=models.CASCADE)
+    news = models.ForeignKey(News, db_column='news_id', on_delete=models.CASCADE)
+
 
 '''
 class BKD(models.Model):
