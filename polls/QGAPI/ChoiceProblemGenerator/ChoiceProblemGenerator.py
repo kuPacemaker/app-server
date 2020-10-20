@@ -3,11 +3,8 @@ import random
 
 class choiceProblemGenerator():
     def choiceProblemGenerator(nouns, aqset):
-        print(nouns)
-        print(aqset)
         count = len(nouns)
         length = len(aqset)
-        print(length)
 
         question = [0 for i in range(length)]
         answer = [0 for i in range(length)]
@@ -21,7 +18,7 @@ class choiceProblemGenerator():
                 if(j != random_answer_position):
                     random_noun_choice = random.randint(0,count-1)
                     while(random_noun_choice == i):
-                        random_noun_choice = random.randint(0,count)
+                        random_noun_choice = random.randint(0,count-1)
                     answerset[i][j] = nouns[random_noun_choice] 
                 else:
                     answerset[i][j] = answer[i]
@@ -30,3 +27,4 @@ class choiceProblemGenerator():
         for i in range(length):
             qa_pair = QAPair.objects.create(qaset = qa_set, index = i+1, question = question[i], answer = answer[i], answer_set = answerset[i])
 
+        return qa_set

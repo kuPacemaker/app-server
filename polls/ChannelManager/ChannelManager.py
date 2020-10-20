@@ -1,13 +1,50 @@
 from django.http import JsonResponse
 from polls.models import *
 from rest_framework.authtoken.models import Token
-from polls.serializers import ChannelIDSerializer,ChannelInfoSerializer
+from polls.serializers import *
 from .HostChannel.ChannelJoinCodeGenerator.ChannelJoinCodeGenerator import channelJoinCodeGenerator
 
 class channelManager():
-#def requestHostChannelList():
+    def requestHostChannelList(token):
+        user_token = Token.objects.filter(token = token)
+        host_channel_list = []
+        if(user_token):
+            host_channel_id_list = []
+            user_token = Token.objects.get(token = token)
+            user = User.objects.get(id=user_token.user_id)
+            host = Host.objects.filter(user=user)
+            if(host):
+                serializer = HostSerializer(host, many=True)
+                length = len(serializer.data)
+                print(length)
+                for i in range(length):
+                    host_channel_list += Channel.objects.filter(id=serializer.data[i]['channel'])
+            else:
+                print("HOST CHANNEL IS NOT EXIST")
+        else:
+            print("TOKEN IS NOT EXIST")
+        
+        return host_channel_list
+        
+    def requestGuestChannelList(token):
+        user_token = Token.objects.filter(token = token)
+        guest_channel_list = []
+        if(user_token):
+            guest_channel_id_list = []
+            user_token = Token.objects.get(token = token)
+            user = User.objects.get(id = user_token.user_id)
+            guest = Guest.objects.filter(user = user)
+            if(guest):
+                serializer = GuestSerializer(guest, many=True)
+                length = len(serializer.data)
+                for i in range(length):
+                    guest_channel_list += Channel.objects.filter(id=serializer.data[i]['channel'])
+            else:
+                print("GUEST CHANNEL IS NOT EXIST")
+        else:
+             print("TOKEN IS NOT EXIST")
 
-#def requestGuestChannelList():
+        return guest_channel_list
 
     def createChannel(request, token):
         user_token = Token.objects.filter(token = token)

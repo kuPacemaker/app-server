@@ -58,18 +58,20 @@ class Channel(models.Model):
     url_id = models.UUIDField(unique=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=20)
     description = models.CharField(max_length=100, blank=True)
-    accesspath = models.CharField(max_length=20, null=True)
+    accesspath = models.CharField(max_length=20, unique=True, null=True)
     
 class Unit(models.Model):
     url_id = models.UUIDField(unique=True, default=uuid.uuid4, editable=False)
     channel = models.ForeignKey(Channel, db_column='ch_id', on_delete=models.CASCADE)
-    index = models.IntegerField()
+    index = models.IntegerField(default=0)
     name = models.CharField(max_length=20)
-    bkd = models.ForeignKey(BKD, db_column='bkd_id', on_delete=models.SET_NULL, null=True)
-    opened = models.BooleanField(default=False)
 
     class Meta:
         unique_together = [['channel', 'index']]
+    
+    def save(self, *args, **kwargs):
+        self.index = Unit.objects.filter(channel=self.channel).count()+1
+        super(Unit, self).save(*args, **kwargs)
 
 class QASet(models.Model):
     url_id = models.UUIDField(unique=True, default=uuid.uuid4, editable=False)
@@ -80,13 +82,17 @@ class QASet(models.Model):
 class QAPair(models.Model):
     url_id = models.UUIDField(unique=True, default=uuid.uuid4, editable=False)
     qaset = models.ForeignKey(QASet, db_column='set_id', on_delete=models.CASCADE)
-    index = models.IntegerField()
-    question = models.CharField(max_length=150)
+    index = models.IntegerField(default=0)
+    question = models.CharField(max_length=200)
     answer = models.CharField(max_length=20)
     answer_set = models.CharField(max_length=100)
     
     class Meta:
         unique_together = [['qaset', 'index']]
+    
+    def save(self, *args, **kwargs):
+        self.index = QAPair.objects.filter(qaset=self.qaset).count()+1
+        super(QAPair, self).save(*args, **kwargs)
 
 class TestPlan(models.Model):
     url_id = models.UUIDField(unique=True, default=uuid.uuid4, editable=False)
@@ -111,9 +117,12 @@ class TestSet(models.Model):
 class TestPair(models.Model):
     url_id = models.UUIDField(unique=True, default=uuid.uuid4, editable=False)
     tset = models.ForeignKey(TestSet, db_column='tset_id', on_delete=models.CASCADE)
-    pair_id = models.ForeignKey(QAPair, db_column='pair_id', on_delete=models.CASCADE)
+    pair = models.ForeignKey(QAPair, db_column='pair_id', on_delete=models.CASCADE)
     user_answer = models.CharField(max_length=20, blank=True)
     correct = models.BooleanField(default=False)
+
+    class Meta:
+        unique_together =[['tset', 'pair']]
 
 class News(models.Model):
     body = models.CharField(max_length=100)
@@ -132,9 +141,10 @@ class BKDOwner(models.Model):
     user = models.ForeignKey(User, db_column='user_id', on_delete=models.CASCADE)
     bkd = models.OneToOneField(BKD, db_column='bkd_id', on_delete=models.CASCADE)
 
-class BKDToQA(models.Model):
+class UnitBKD(models.Model):
     bkd = models.ForeignKey(BKD, db_column='bkd_id', on_delete=models.CASCADE)
-    qaset = models.OneToOneField(QASet, db_column='set_id', on_delete=models.CASCADE)
+    unit = models.OneToOneField(Unit, db_column='unit_id', on_delete=models.CASCADE)
+    opened = models.BooleanField(default=False)
 
 class UnitQA(models.Model):
     qaset = models.OneToOneField(QASet, db_column='set_id', on_delete=models.CASCADE)
@@ -148,6 +158,11 @@ class UserNews(models.Model):
     user = models.ForeignKey(User, db_column='user_id', on_delete=models.CASCADE)
     news = models.ForeignKey(News, db_column='news_id', on_delete=models.CASCADE)
 
+'''
+class BKDToQA(models.Model):
+    bkd = models.ForeignKey(BKD, db_column='bkd_id', on_delete=models.CASCADE)
+    qaset = models.OneToOneField(QASet, db_column='set_id', on_delete=models.CASCADE)
+'''
 
 '''
 class BKD(models.Model):

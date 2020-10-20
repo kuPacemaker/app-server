@@ -4,6 +4,7 @@ from . import views
 from .AccountManager.AccountManager import accountManager
 from .FileManager.BKDManager.BKDManager import bkdManager
 from .ChannelManager.ChannelManager import channelManager
+from .ChannelManager.GuestChannel.GuestChannel import guestChannel
 from .QGAPI.QGAPI import qgapi
 
 app_name = 'polls'
@@ -15,10 +16,10 @@ urlpatterns = [
 ]
 
 account_url_patterns = [
-    path('signIn/<str:uid>/<str:upw>/',accountManager.signIn, name='signIn'),
-    path('signUp/<str:uid>/<str:upw>/<str:uname>/',accountManager.signUp, name='signUp'),
+    path('signIn/<str:uid>/<str:pw>/',accountManager.signIn, name='signIn'),
+    path('signUp/<str:uid>/<str:name>/<str:pw>/',accountManager.signUp, name='signUp'),
     path('findAccount/<str:uid>/',accountManager.findAccount, name='findAccount'),
-    path('modifyAccount/<str:uid>/<str:uname>/<str:upw>/<str:newpw>/',accountManager.modifyAccount, name='modifyAccount'),
+    path('modifyAccount/<str:uid>/<str:name>/<str:pw>/<str:pw_new>/',accountManager.modifyAccount, name='modifyAccount'),
 ]
 
 bkd_url_patterns = [
@@ -29,13 +30,14 @@ bkd_url_patterns = [
 ]
 
 qg_url_patterns = [
-    path('questionGenerate/<int:bkd_id>/',qgapi.questionGenerate, name='questionGenerate'),
+    path('generateQuestion/<int:document>/',qgapi.generateQuestion, name='questionGenerate'),
 ]
 
 channel_url_patterns = [
     path('createChannel/<str:token>/',channelManager.createChannel, name='createChannel'),
     path('deleteChannel/<str:token>/<uuid:channel_id>/',channelManager.deleteChannel, name='deleteChannel'),
     path('editChannel/<str:token>/<uuid:channel_id>/<str:channel_name>/<str:channel_desc>/',channelManager.editChannel, name='editChannel'),
+    path('enterChannel/<str:token>/<str:accesscode>/',guestChannel.enterChannel, name='enterChannel'),
 ]
 
 #urlpatterns = []

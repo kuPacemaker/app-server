@@ -31,3 +31,18 @@ class ChannelInfoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Channel
         fields = ('url_id','name','description')
+
+class QAPairSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = QAPair
+        fields = ('url_id','question','answer','answer_set')
+
+class HostSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Host
+        fields = ('user','channel')
+
+class GuestSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Guest
+        fields = ('user','channel')

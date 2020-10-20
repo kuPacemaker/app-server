@@ -10,11 +10,15 @@ class hostChannel():
 
     def excludeChannelMember():
 
-    def createUnit(request, token):
+    def createUnit(request, token, channel, index, title):
         user_token = Token.objects.filter(token = token)
         if(user_token):
             #token 존재
             print("TOKEN IS ExIST")
+            user_token = Token.objects.get(token = token)
+            user = User.objects.get(id = user_token.user_id)
+            host = Host.objects.filter(user=user)
+
         else:
             #token 미존재
             print("TOKEN IS NOT EXIST")

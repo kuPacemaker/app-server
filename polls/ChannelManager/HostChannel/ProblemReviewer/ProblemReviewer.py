@@ -1,6 +1,6 @@
 
-class problemReviewer():
-    def inquireIntoProblemList():
+class paperCreator():
+    def verifyQuestion():
 
-    def problemReview():
+    def makeReservation():
 

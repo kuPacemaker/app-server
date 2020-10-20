@@ -1,6 +1,4 @@
 
 class testPaperCollector():
-    def makeData():
-
-    def inquireIntoTestPaperCollectRate():
+    def submitPaper():
 
