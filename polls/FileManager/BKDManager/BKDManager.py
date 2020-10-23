@@ -1,60 +1,113 @@
 from django.shortcuts import render
 from django.http import JsonResponse
-from polls.models import BKD, Question
-from polls.serializers import BKDSerializer, BKDIDSerializer
+from polls.models import *
+from polls.serializers import *
+from collections import OrderedDict
+import json
 
 class bkdManager():
-    def requestBKD(request, title):
-        bkd = BKD.objects.filter(title = title)
-        if(bkd):
-            #bkd 존재
-            bkd = BKD.objects.get(title = title)
-            print(bkd.title)
-            print(bkd.body)
+    def requestBKD(request, token, unit):
+        user_token = Token.objects.filter(token = token)
+        data = OrderedDict()
+        if(user_token):
+            unit = Unit.objects.filter(url_id = unit)
+            if(unit):
+                unit_bkd = UnitBKD.objects.get(unit = unit[0])
+                bkd = BKD.objects.filter(id=unit_bkd.bkd.id)
+                serializer = BKDIDSerializer(bkd,many=True)
+                data["id"] = serializer.data[0]['url_id']
+                data["visible"] = unit_bkd.opened
+                data["title"] = bkd[0].title
+                data["body"] = bkd[0].body
+
+            else:
+                data["message"] = 'Unit is not exist'
         else:
-            #bkd 미존재
-            print("BKD IS NOT EXIST.")
+            data["message"] = 'Token is not exist'
 
-        bkd = BKD.objects.filter(title = title)
-        serializer = BKDSerializer(bkd, many=True)
+        json.dumps(data, ensure_ascii=False, indent="\t")
 
-        return JsonResponse(serializer.data[0], safe=False)
+        return JsonResponse(data, safe=False)
 
-    def createBKD(request):
-        bkd = BKD.objects.create(title = '', body = '')
-        #빈 BKD 생성
-        bkd_id = bkd.id
-        bkd = BKD.objects.filter(id = bkd_id)
-        serializer = BKDIDSerializer(bkd, many=True)
-        #해당 ID Client로 보냄
-        
-        return JsonResponse(serializer.data[0], safe=True)
+    def createBKD(request, token, unit):
+        user_token = Token.objects.filter(token = token)
+        data = OrderedDict()
+        if(user_token):
+            unit_one = Unit.objects.filter(url_id = unit)
+            if(unit_one):    
+                host = Host.objects.get(channel = unit_one[0].channel)
+                if(user_token[0].user_id == host.user.id):
+                    bkd = BKD.objects.create(title='', body='')
+                    unit_bkd = UnitBKD.objects.create(bkd=bkd, unit=unit_one[0], opened=True)
+                    bkd_owner = BKDOwner.objects.create(user=host.user, bkd=bkd)
+                    bkd = BKD.objects.filter(id = bkd.id)
+                    serializer = BKDIDSerializer(bkd,many=True)
+                    data["id"] = serializer.data[0]['url_id']
+                    data["visible"] = unit_bkd.opened
+                    data["title"] = bkd[0].title
+                    data["body"] = bkd[0].body
 
-    def editBKD(request, bkd_id, title, body):
-        print(body)
-        bkd = BKD.objects.get(id = bkd_id)
-        bkd.title = title
-        bkd.body = body
-        bkd.save()
-
-        print(bkd.body)
-
-        latest_question_list = Question.objects.order_by('-pub_date')[:5]
-        context = {'latest_question_list':latest_question_list}
-        return render(request, 'polls/index.html',context)
-
-
-    def deleteBKD(request, title):
-        bkd = BKD.objects.filter(title = title)
-        if(bkd):
-            #BKD 존재 및 삭제
-            bkd.delete()
-            print("BKD IS DELETED")
+                else:
+                    data["message"] = 'User is not channel\'s host'
+            else:
+                data["message"] = 'Unit is not exist'
         else:
-            #BKD 미존재
-            print("BKD IS NOT EXIST")
+            data["message"] = 'token is not exist'
 
-        latest_question_list = Question.objects.order_by('-pub_date')[:5]
-        context = {'latest_question_list':latest_question_list}
-        return render(request, 'polls/index.html',context)
+        json.dumps(data, ensure_ascii=False, indent="\t")
 
+        return JsonResponse(data, safe=False)
+
+    def editBKD(request, token, bkd_id, visible, title, body):
+        user_token = Token.objects.filter(token = token)
+        data = OrderedDict()
+        if(user_token):
+            bkd = BKD.objects.filter(url_id = bkd_id)
+            if(bkd):
+                user = User.objects.get(id=user_token[0].user_id)
+                bkd_owner = BKDOwner.objects.filter(user=user)
+                if(bkd_owner):
+                    bkd[0].opened = visible
+                    bkd[0].title = title
+                    bkd[0].body = body
+                    bkd[0].save()
+
+                    serializer = BKDIDSerializer(bkd,many=True)
+                    data["id"] = serializer.data[0]['url_id']
+                    data["visible"] = bkd[0].opened
+                    data["title"] = bkd[0].title
+                    data["body"] = bkd[0].body
+
+                else:
+                    data["message"] = 'User is not channel\'s host'
+            else:
+                data["message"] = 'BKD is not exist'
+        else:
+            data["message"] = 'token is not exist'
+
+        json.dumps(data, ensure_ascii=False, indent="\t")
+
+        return JsonResponse(data, safe=False)
+
+    def deleteBKD(request, token, bkd_id):
+        user_token = Token.objects.filter(token = token)
+        data = OrderedDict()
+        if(user_token):
+            bkd = BKD.objects.filter(url_id = bkd_id)
+            if(bkd):
+                user = User.objects.get(id=user_token[0].user_id)
+                bkd_owner = BKDOwner.objects.filter(user=user)
+                if(bkd_owner):
+                    bkd[0].delete()
+                    bkd[0].save()
+                    data["message"] = 'BKD is deleted'
+                else:
+                    data["message"] = 'User is not channel\'s host'
+            else:
+                data["message"] = 'BKD is not exist'
+        else:
+            data["message"] = 'Token is not exist'
+
+        json.dumps(data, ensure_ascii=False, indent = "\t")
+
+        return JsonResponse(data, safe=False)

@@ -51,6 +51,9 @@ class guestChannel():
                         data["runner"][i]["detail"] = guest_channel_list[i].description
                         data["runner"][i]["image"] = None
 		        
+                    #이 아래부분은 새로 입장하는 채널을 추가하는 부분인데
+                    #이미 입장해있는 채널인지 여부를 확인해주는 부분이
+                    #추가되어야 한다
                     serializer = ChannelInfoSerializer(channel, many=True)
                     data["runner"][guest_length] = OrderedDict()
                     data["runner"][guest_length]["id"] = serializer.data[0]['url_id']

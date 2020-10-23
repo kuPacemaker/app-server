@@ -107,28 +107,40 @@ class channelManager():
 
     def editChannel(request, token, channel_id, channel_name, channel_desc):
         user_token = Token.objects.filter(token = token)
+        data = OrderedDict()
         if(user_token):
             #token 존재
             channel = Channel.objects.filter(url_id = channel_id)
             if(channel):
                 #channel 존재
-                channel = Channel.objects.get(url_id = channel_id)
-                channel.name = channel_name
-                channel.description = channel_desc
-                channel.save()
+                host = Host.objects.filter(channel = channel[0])
+                if(host.user.id == user_token[0].user_id):
+                    channel = Channel.objects.get(url_id = channel_id)
+                    channel.name = channel_name
+                    channel.description = channel_desc
+                    channel.save()
 
-                channel = Channel.objects.filter(url_id = channel_id)
-                serializer = ChannelInfoSerializer(channel, many=True)
+                    channel = Channel.objects.filter(url_id = channel_id)
+                    serializer = ChannelInfoSerializer(channel, many=True)
 
-                return JsonResponse(serializer.data[0], safe=False)
+                    return JsonResponse(serializer.data[0], safe=False)
+                
+                else:
+                    #해당 채널이 user의 것이 아님
+                    data["message"] = 'User is not channel\'s host'
 
             else:
                 #channel 미존재
-                print("CHANNEL IS NOT EXIST")
+                data["message"] = 'Channel is not exist'
             
         else:
             #token 미존재
-            print("TOKEN IS NOT EXIST")
+            data["message"] = 'Token is not exist'
+        
+        json.dumps(data, ensure_ascii=False, indent = "\t")
+
+        return JsonResponse(data, safe=False)
+
 
     def deleteChannel(request, token, channel_id):
         user_token = Token.objects.filter(token = token)

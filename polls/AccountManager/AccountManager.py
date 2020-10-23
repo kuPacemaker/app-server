@@ -79,8 +79,23 @@ class accountManager():
 
         return JsonResponse(data, safe=False)
 
-    def modifyAccount(request,uid,name,pw,pw_new):
-        #토큰도 입력으로 받아야 한다.
+    def modifyAccount(request,token,uid,name,pw,pw_new):
+        user_token = Token.objets.filter(token = token)
+        data = OrderedDict()
+        if(user_token):
+            user = User.objects.filter(username=uid)
+            if(user):
+                if(user[0].password == pw):
+                    user[0].first_name = name
+                    user[0].password = pw_new
+                    user[0].save()
+                    data["message"] = 'Success.'
+                else:
+                    data["message"] = 'Password is wrong'
+            else:
+                data["message"] = 'E-mail is not exist'
+        else:
+            data["message"] = 'Token is not exist'
         user = User.objects.get(username = uid)
         data = OrderedDict()
         if(user.password == pw):

@@ -20,14 +20,14 @@ account_url_patterns = [
     path('signIn/<str:uid>/<str:pw>/',accountManager.signIn, name='signIn'),
     path('signUp/<str:uid>/<str:name>/<str:pw>/',accountManager.signUp, name='signUp'),
     path('findAccount/<str:uid>/',accountManager.findAccount, name='findAccount'),
-    path('modifyAccount/<str:uid>/<str:name>/<str:pw>/<str:pw_new>/',accountManager.modifyAccount, name='modifyAccount'),
+    path('modifyAccount/<str:token>/<str:uid>/<str:name>/<str:pw>/<str:pw_new>/',accountManager.modifyAccount, name='modifyAccount'),
 ]
 
 bkd_url_patterns = [
-    path('requestBKD/<str:title>/',bkdManager.requestBKD, name='requestBKD'),
-    path('createBKD/',bkdManager.createBKD, name='createBKD'),
-    path('editBKD/<int:bkd_id>/<str:title>/<str:body>/',bkdManager.editBKD, name='editBKD'),
-    path('deleteBKD/<str:title>/',bkdManager.deleteBKD, name='deleteBKD'),
+    path('requestBKD/<str:token>/<uuid:unit>/',bkdManager.requestBKD, name='requestBKD'),
+    path('createBKD/<str:token>/<uuid:unit>/',bkdManager.createBKD, name='createBKD'),
+    path('editBKD/<str:token>/<uuid:bkd_id>/<str:visible>/<str:title>/<str:body>/',bkdManager.editBKD, name='editBKD'),
+    path('deleteBKD/<str:token>/<uuid:bkd_id>/',bkdManager.deleteBKD, name='deleteBKD'),
 ]
 
 qg_url_patterns = [

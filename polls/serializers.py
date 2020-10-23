@@ -15,7 +15,7 @@ class BKDSerializer(serializers.ModelSerializer):
 class BKDIDSerializer(serializers.ModelSerializer):
     class Meta:
         model = BKD
-        fields = ('id',)
+        fields = ('url_id',)
 
 class TokenSerializer(serializers.ModelSerializer):
     class Meta:
