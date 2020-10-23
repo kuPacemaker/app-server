@@ -1,6 +1,5 @@
 
-class paperCreator():
+class considerQuestion():
     def verifyQuestion():
 
     def makeReservation():
-

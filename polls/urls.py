@@ -5,6 +5,7 @@ from .AccountManager.AccountManager import accountManager
 from .FileManager.BKDManager.BKDManager import bkdManager
 from .ChannelManager.ChannelManager import channelManager
 from .ChannelManager.GuestChannel.GuestChannel import guestChannel
+from .ChannelManager.HostChannel.HostChannel import hostChannel
 from .QGAPI.QGAPI import qgapi
 
 app_name = 'polls'
@@ -40,8 +41,14 @@ channel_url_patterns = [
     path('enterChannel/<str:token>/<str:accesscode>/',guestChannel.enterChannel, name='enterChannel'),
 ]
 
+unit_url_patterns = [
+    path('createUnit/<str:token>/<uuid:channel>/<int:index>/<str:title>/',hostChannel.createUnit, name='createUnit'),
+    path('deleteUnit/<str:token>/<uuid:unit_id>/',hostChannel.deleteUnit, name='deleteUnit'),
+]
+
 #urlpatterns = []
 urlpatterns += account_url_patterns
 urlpatterns += bkd_url_patterns
 urlpatterns += qg_url_patterns
 urlpatterns += channel_url_patterns
+urlpatterns += unit_url_patterns

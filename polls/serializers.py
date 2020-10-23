@@ -30,7 +30,7 @@ class ChannelIDSerializer(serializers.ModelSerializer):
 class ChannelInfoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Channel
-        fields = ('url_id','name','description')
+        fields = ('url_id','name','description','accesspath')
 
 class QAPairSerializer(serializers.ModelSerializer):
     class Meta:
@@ -46,3 +46,8 @@ class GuestSerializer(serializers.ModelSerializer):
     class Meta:
         model = Guest
         fields = ('user','channel')
+
+class UnitSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Unit
+        fields = ('url_id','channel','index','name')
