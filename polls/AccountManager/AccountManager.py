@@ -1,14 +1,18 @@
 from django.shortcuts import render
 from django.http import JsonResponse
-from ..models import Question, User
+from polls.models import *
 from .EmailSender.EmailSender import emailSender
-from rest_framework.authtoken.models import Token
-from ..serializers import TokenSerializer, UserSerializer
-import json
+#from rest_framework.authtoken.models import Token
+from polls.serializers import *
+from rest_framework.decorators import api_view
 from collections import OrderedDict
+import json
 
 class accountManager():
-    def signIn(request,uid,pw):
+    @api_view(['POST'])
+    def signIn(request):
+        uid = request.data['id']
+        pw = request.data['pw']
         user = User.objects.filter(username = uid)
         data = OrderedDict()
         if(user):
@@ -24,7 +28,7 @@ class accountManager():
                 data["id"] = user.username
                 data["name"] = user.first_name
                 data["type"] = None
-                data["token"] = serializer.data[0]['token']
+                data["token"] = serializer.data[0]['key']
             else:
                 #password와 upw가 일치하지 않음
                 print("PASSWORD WRONG")
@@ -44,7 +48,11 @@ class accountManager():
 
         return JsonResponse(data, safe=False)
 
-    def signUp(request,uid,name,pw):
+    @api_view(['POST'])
+    def signUp(request):
+        uid = request.data['id']
+        name = request.data['name']
+        pw = request.data['pw']
         user = User.objects.filter(username = id)
         data = OrderedDict()
         if(user):
@@ -60,7 +68,9 @@ class accountManager():
 
         return JsonResponse(data, safe=False)
 
-    def findAccount(request,uid):
+    @api_view(['POST'])
+    def findAccount(request):
+        uid = request.data['id']
         #user의 first_name도 같이 포함해서 찾아야 함
         user = User.objects.filter(username = uid)
         data = OrderedDict()
@@ -79,8 +89,14 @@ class accountManager():
 
         return JsonResponse(data, safe=False)
 
-    def modifyAccount(request,token,uid,name,pw,pw_new):
-        user_token = Token.objets.filter(token = token)
+    @api_view(['POST']) 
+    def modifyAccount(request):
+        token = request.data['token']
+        uid = request.data['id']
+        name = request.data['name']
+        pw = request.data['pw']
+        pw_new = request.data['pw_new']
+        user_token = Token.objects.filter(key = token)
         data = OrderedDict()
         if(user_token):
             user = User.objects.filter(username=uid)
@@ -96,18 +112,6 @@ class accountManager():
                 data["message"] = 'E-mail is not exist'
         else:
             data["message"] = 'Token is not exist'
-        user = User.objects.get(username = uid)
-        data = OrderedDict()
-        if(user.password == pw):
-            #DB의 기존 비밀번호와 사용자 입력이 일치
-            user.password = pw_new
-            user.first_name = name
-            user.save()
-            data["message"] = "Success."
-        else:
-            #불일치
-            print("PASSWORD IS WRONG")
-            data["message"] = "Fail. Password is wrong."
 
         json.dumps(data, ensure_ascii = False, indent = "\t")
 

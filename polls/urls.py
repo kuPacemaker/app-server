@@ -17,33 +17,33 @@ urlpatterns = [
 ]
 
 account_url_patterns = [
-    path('signIn/<str:uid>/<str:pw>/',accountManager.signIn, name='signIn'),
-    path('signUp/<str:uid>/<str:name>/<str:pw>/',accountManager.signUp, name='signUp'),
-    path('findAccount/<str:uid>/',accountManager.findAccount, name='findAccount'),
-    path('modifyAccount/<str:token>/<str:uid>/<str:name>/<str:pw>/<str:pw_new>/',accountManager.modifyAccount, name='modifyAccount'),
+    path('signIn/',accountManager.signIn, name='signIn'),
+    path('signUp/',accountManager.signUp, name='signUp'),
+    path('findAccount/',accountManager.findAccount, name='findAccount'),
+    path('modifyAccount/',accountManager.modifyAccount, name='modifyAccount'),
 ]
 
 bkd_url_patterns = [
-    path('requestBKD/<str:token>/<uuid:unit>/',bkdManager.requestBKD, name='requestBKD'),
-    path('createBKD/<str:token>/<uuid:unit>/',bkdManager.createBKD, name='createBKD'),
-    path('editBKD/<str:token>/<uuid:bkd_id>/<str:visible>/<str:title>/<str:body>/',bkdManager.editBKD, name='editBKD'),
-    path('deleteBKD/<str:token>/<uuid:bkd_id>/',bkdManager.deleteBKD, name='deleteBKD'),
+    path('requestBKD/',bkdManager.requestBKD, name='requestBKD'),
+    path('createBKD/',bkdManager.createBKD, name='createBKD'),
+    path('editBKD/',bkdManager.editBKD, name='editBKD'),
+    path('deleteBKD/',bkdManager.deleteBKD, name='deleteBKD'),
 ]
 
 qg_url_patterns = [
-    path('generateQuestion/<int:document>/',qgapi.generateQuestion, name='questionGenerate'),
+    path('generateQuestion/',qgapi.generateQuestion, name='questionGenerate'),
 ]
 
 channel_url_patterns = [
-    path('createChannel/<str:token>/',channelManager.createChannel, name='createChannel'),
-    path('deleteChannel/<str:token>/<uuid:channel_id>/',channelManager.deleteChannel, name='deleteChannel'),
-    path('editChannel/<str:token>/<uuid:channel_id>/<str:channel_name>/<str:channel_desc>/',channelManager.editChannel, name='editChannel'),
-    path('enterChannel/<str:token>/<str:accesscode>/',guestChannel.enterChannel, name='enterChannel'),
+    path('createChannel/',channelManager.createChannel, name='createChannel'),
+    path('deleteChannel/',channelManager.deleteChannel, name='deleteChannel'),
+    path('editChannel/',channelManager.editChannel, name='editChannel'),
+    path('enterChannel/',guestChannel.enterChannel, name='enterChannel'),
 ]
 
 unit_url_patterns = [
-    path('createUnit/<str:token>/<uuid:channel>/<int:index>/<str:title>/',hostChannel.createUnit, name='createUnit'),
-    path('deleteUnit/<str:token>/<uuid:unit_id>/',hostChannel.deleteUnit, name='deleteUnit'),
+    path('createUnit/',hostChannel.createUnit, name='createUnit'),
+    path('deleteUnit/',hostChannel.deleteUnit, name='deleteUnit'),
 ]
 
 #urlpatterns = []

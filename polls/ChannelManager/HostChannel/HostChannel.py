@@ -3,7 +3,8 @@ from django.http import JsonResponse
 from polls.models import *
 from polls.serializers import *
 from collections import OrderedDict
-import json
+from rest_framework.decorators import api_view
+import json, uuid
 
 class hostChannel():
     def ChannelJoinCodeGenerate():
@@ -13,18 +14,23 @@ class hostChannel():
 
 #def excludeChannelMember():
 
-    def createUnit(request, token, channel, index, title):
-        user_token = Token.objects.filter(token = token)
+    @api_view(['POST'])
+    def createUnit(request):
+        token = request.data['token']
+        channel_id = uuid.UUID(uuid.UUID(request.data['channel_id']).hex)
+        index = request.data['index']
+        title = request.data['title']
+        user_token = Token.objects.filter(key = token)
         data = OrderedDict()
         if(user_token):
             #token 존재
-            user_token = Token.objects.get(token = token)
-            channel = Channel.objects.filter(url_id=channel)
+            user_token = Token.objects.get(key = token)
+            channel = Channel.objects.filter(url_id=channel_id)
             channel_serializer = ChannelInfoSerializer(channel,many=True)
             host = Host.objects.get(channel=channel[0])
             user = User.objects.filter(id=user_token.user_id)
-            if(user == host.user):
-                user = User.objects.get(id = host.id)
+            if(user[0] == host.user):
+                user = User.objects.get(id = host.user_id)
                 unit = Unit.objects.create(channel = channel[0], index=index, name=title)
                 unit_list = Unit.objects.filter(channel=channel[0]).order_by('index')
                 unit_serializer = UnitSerializer(unit_list,many=True)
@@ -62,8 +68,11 @@ class hostChannel():
 
 #def editUnit(request, token, cid, cname, cdesc):
 
-    def deleteUnit(request, token, unit_id):
-        user_token = Token.objects.filter(token = token)
+    @api_view(['POST'])
+    def deleteUnit(request):
+        token = request.data['token']
+        unit_id = uuid.UUID(uuid.UUID(request.data['unit_id']).hex)
+        user_token = Token.objects.filter(key = token)
         data = OrderedDict()
         if(user_token):
             #토큰 존재

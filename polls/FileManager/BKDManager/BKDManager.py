@@ -3,11 +3,15 @@ from django.http import JsonResponse
 from polls.models import *
 from polls.serializers import *
 from collections import OrderedDict
-import json
+from rest_framework.decorators import api_view
+import json, uuid
 
 class bkdManager():
-    def requestBKD(request, token, unit):
-        user_token = Token.objects.filter(token = token)
+    @api_view(['POST'])
+    def requestBKD(request):
+        token = request.data['token']
+        unit = uuid.UUID(uuid.UUID(request.data['unit']).hex)
+        user_token = Token.objects.filter(key = token)
         data = OrderedDict()
         if(user_token):
             unit = Unit.objects.filter(url_id = unit)
@@ -29,8 +33,11 @@ class bkdManager():
 
         return JsonResponse(data, safe=False)
 
-    def createBKD(request, token, unit):
-        user_token = Token.objects.filter(token = token)
+    @api_view(['POST'])
+    def createBKD(request):
+        token = request.data['token']
+        unit = uuid.UUID(uuid.UUID(request.data['unit']).hex)
+        user_token = Token.objects.filter(key = token)
         data = OrderedDict()
         if(user_token):
             unit_one = Unit.objects.filter(url_id = unit)
@@ -58,8 +65,14 @@ class bkdManager():
 
         return JsonResponse(data, safe=False)
 
-    def editBKD(request, token, bkd_id, visible, title, body):
-        user_token = Token.objects.filter(token = token)
+    @api_view(['POST'])
+    def editBKD(request):
+        token = request.data['token']
+        bkd_id = uuid.UUID(uuid.UUID(request.data['bkd_id']).hex)
+        visible = request.data['visible']
+        title = request.data['title']
+        body = request.data['body']
+        user_token = Token.objects.filter(key = token)
         data = OrderedDict()
         if(user_token):
             bkd = BKD.objects.filter(url_id = bkd_id)
@@ -89,8 +102,11 @@ class bkdManager():
 
         return JsonResponse(data, safe=False)
 
-    def deleteBKD(request, token, bkd_id):
-        user_token = Token.objects.filter(token = token)
+    @api_view(['POST'])
+    def deleteBKD(request):
+        token = request.data['token']
+        bkd_id = uuid.UUID(uuid.UUID(request.data['bkd_id']).hex)
+        user_token = Token.objects.filter(key = token)
         data = OrderedDict()
         if(user_token):
             bkd = BKD.objects.filter(url_id = bkd_id)

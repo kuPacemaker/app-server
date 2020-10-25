@@ -5,7 +5,8 @@ from polls.serializers import *
 from rest_framework.parsers import JSONParser
 from .ChoiceProblemGenerator.ChoiceProblemGenerator import choiceProblemGenerator
 from collections import OrderedDict
-import requests, json
+from rest_framework.decorators import api_view
+import requests, json, uuid
 
 
 class qgapi():
@@ -42,51 +43,65 @@ class qgapi():
   
         return result
 
-    def generateQuestion(request,document):#, token, channel, unit, document):
-        user_token = True #= Token.objecs.filter(token = token)
+    @api_view(['POST'])
+    def generateQuestion(request):
+        token = request.data['token']
+        unit_id = uuid.UUID(uuid.UUID(request.data['unit_id']).hex)
+        user_token = Token.objects.filter(key = token)
         if(user_token):
             #token 존재
-            bkd = BKD.objects.get(id = document)
+            unit = Unit.objects.filter(url_id = unit_id)
+            if(unit):
+                #unit이 존재
+                host = Host.objects.filter(channel = unit[0].channel)
+                if(user_token[0].user_id == host[0].user.id):
+                    #token에 해당하는 user가 unit이 존재하는 channel의 host이면
+                    unit_bkd = UnitBKD.objects.get(unit = unit[0])
+                    bkd = BKD.objects.get(id = unit_bkd.bkd.id)
         
-            URL = 'http://117.16.136.170/restful/qg'
-            data = {'bkd' : bkd.body}
-            res = requests.post(URL, data=data)
-            content = res.text
-            nouns = []
-            aqset = []
-            question_data = json.loads(content)
-            length = len(question_data['passages'])
-            for i in range(length):
-                nouns += question_data['passages'][i]['nouns']
-                aqset += question_data['passages'][i]['aqset']
+                    URL = 'http://117.16.136.170/restful/qg'
+                    data = {'bkd' : bkd.body}
+                    res = requests.post(URL, data=data)
+                    content = res.text
+                    nouns = []
+                    aqset = []
+                    question_data = json.loads(content)
+                    length = len(question_data['passages'])
+                    for i in range(length):
+                        nouns += question_data['passages'][i]['nouns']
+                        aqset += question_data['passages'][i]['aqset']
     
-            qa_set = choiceProblemGenerator.choiceProblemGenerator(nouns,aqset)
-            #객관식 문제 생성이 끝난 qa_set에 대해서
-            qa_pair = QAPair.objects.filter(qaset = qa_set)
-            #각 qa_pair를 찾아서
-            length = qa_pair.count()
-            serializer = QAPairSerializer(qa_pair, many=True)
+                    qa_set = choiceProblemGenerator.choiceProblemGenerator(nouns,aqset)
+                    #객관식 문제 생성이 끝난 qa_set에 대해서
+                    qa_pair = QAPair.objects.filter(qaset = qa_set)
+                    #각 qa_pair를 찾아서
+                    length = qa_pair.count()
+                    serializer = QAPairSerializer(qa_pair, many=True)
 
-            #여기서부터 json 형식의 파일을 만들기 위한 작업을 한다.
-            data = OrderedDict()
-            data["isStart"] = None
-            data["isEnd"] = None
-            data["questions"] = [0 for i in range(length)]
+                    #여기서부터 json 형식의 파일을 만들기 위한 작업을 한다.
+                    data = OrderedDict()
+                    data["isStart"] = None
+                    data["isEnd"] = None
+                    data["questions"] = [0 for i in range(length)]
             
-            for i in range(length):
-                data["questions"][i] = OrderedDict()
-                data["questions"][i]["id"] = serializer.data[i]['url_id']
-                data["questions"][i]["quiz"] = serializer.data[i]['question']
-                data["questions"][i]["answer"] = serializer.data[i]['answer']
-                data["questions"][i]["user_answer"] = ''
-                data["questions"][i]["answer_set"] = qgapi.stringWithSlash(qa_pair[i].answer_set)
-                #이 부분은 str 형식으로 저장되어 있어서 단어를 따로 찾아서 /로 연결해주기 위한 함수를 호출한다
-                data["questions"][i]["verified"] = True
-
-            json.dumps(data, ensure_ascii=False, indent="\t")
-
-            return JsonResponse(data, safe=False)
+                    for i in range(length):
+                        data["questions"][i] = OrderedDict()
+                        data["questions"][i]["id"] = serializer.data[i]['url_id']
+                        data["questions"][i]["quiz"] = serializer.data[i]['question']
+                        data["questions"][i]["answer"] = serializer.data[i]['answer']
+                        data["questions"][i]["user_answer"] = ''
+                        data["questions"][i]["answer_set"] = qgapi.stringWithSlash(qa_pair[i].answer_set)
+                        #이 부분은 str 형식으로 저장되어 있어서 단어를 따로 찾아서 /로 연결해주기 위한 함수를 호출한다
+                        data["questions"][i]["verified"] = True
+                else:
+                    data["message"] = 'User is not this channel\'s host'
+            else:
+                data["message"] = 'Unit is not exist'
         else:
             #token 미존재
-            print("TOKEN IS NOT EXIST")
+            data["message"] = 'Token is not exist'
+
+        json.dumps(data, ensure_ascii=False, indent="\t")
+
+        return JsonResponse(data, safe=False)
 

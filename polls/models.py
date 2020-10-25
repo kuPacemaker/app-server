@@ -84,8 +84,8 @@ class QAPair(models.Model):
     qaset = models.ForeignKey(QASet, db_column='set_id', on_delete=models.CASCADE)
     index = models.IntegerField(default=0)
     question = models.CharField(max_length=200)
-    answer = models.CharField(max_length=20)
-    answer_set = models.CharField(max_length=100)
+    answer = models.CharField(max_length=50)
+    answer_set = models.CharField(max_length=220)
     
     class Meta:
         unique_together = [['qaset', 'index']]

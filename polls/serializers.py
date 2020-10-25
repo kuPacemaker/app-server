@@ -20,7 +20,7 @@ class BKDIDSerializer(serializers.ModelSerializer):
 class TokenSerializer(serializers.ModelSerializer):
     class Meta:
         model = Token
-        fields = ('token',)
+        fields = ('key',)
 
 class ChannelIDSerializer(serializers.ModelSerializer):
     class Meta:

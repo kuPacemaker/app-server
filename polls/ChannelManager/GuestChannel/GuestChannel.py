@@ -3,11 +3,15 @@ from polls.models import *
 from polls.serializers import *
 from collections import OrderedDict
 from ..ChannelManager import channelManager
+from rest_framework.decorators import api_view
 import json
 
 class guestChannel():
-    def enterChannel(request, token, accesscode):
-        user_token = Token.objects.filter(token = token)
+    @api_view(['POST'])
+    def enterChannel(request):
+        token = request.data['token']
+        accesscode = request.data['accesscode']
+        user_token = Token.objects.filter(key = token)
         channel = Channel.objects.filter(accesspath = accesscode)
         data = OrderedDict()
         if(user_token):

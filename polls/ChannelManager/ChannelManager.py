@@ -4,15 +4,16 @@ from rest_framework.authtoken.models import Token
 from polls.serializers import *
 from .HostChannel.ChannelJoinCodeGenerator.ChannelJoinCodeGenerator import channelJoinCodeGenerator
 from collections import OrderedDict
+from rest_framework.decorators import api_view
 import json
 
 class channelManager():
     def requestHostChannelList(token):
-        user_token = Token.objects.filter(token = token)
+        user_token = Token.objects.filter(key = token)
         host_channel_list = []
         if(user_token):
             host_channel_id_list = []
-            user_token = Token.objects.get(token = token)
+            user_token = Token.objects.get(key = token)
             user = User.objects.get(id=user_token.user_id)
             host = Host.objects.filter(user=user)
             if(host):
@@ -29,11 +30,11 @@ class channelManager():
         return host_channel_list
         
     def requestGuestChannelList(token):
-        user_token = Token.objects.filter(token = token)
+        user_token = Token.objects.filter(key = token)
         guest_channel_list = []
         if(user_token):
             guest_channel_id_list = []
-            user_token = Token.objects.get(token = token)
+            user_token = Token.objects.get(key = token)
             user = User.objects.get(id = user_token.user_id)
             guest = Guest.objects.filter(user = user)
             if(guest):
@@ -48,12 +49,16 @@ class channelManager():
 
         return guest_channel_list
 
-    def createChannel(request, token):
-        user_token = Token.objects.filter(token = token)
+    @api_view(['POST'])
+    def createChannel(request):
+        token = request.data['token']
+        channel_name = request.data['channel_name']
+        channel_desc = request.data['channel_desc']
+        user_token = Token.objects.filter(key = token)
         data = OrderedDict()
         if(user_token):
             #token 존재
-            user_token = Token.objects.get(token = token)
+            user_token = Token.objects.get(key = token)
             user = User.objects.get(id = user_token.user_id)
             channel_join_code = channelJoinCodeGenerator.channelJoinCodeGenerate()
             host_channel_list = channelManager.requestHostChannelList(token)
@@ -72,7 +77,7 @@ class channelManager():
                 data["leader"][i]["detail"] = host_channel_list[i].description
                 data["leader"][i]["image"] = None
                
-            new_channel = Channel.objects.create(name='',description='',accesspath=channel_join_code)
+            new_channel = Channel.objects.create(name=channel_name, description=channel_desc, accesspath=channel_join_code)
             Host.objects.create(channel = new_channel, user = user)
             channel = Channel.objects.filter(id=new_channel.id)
             serializer = ChannelInfoSerializer(channel,many=True)
@@ -105,8 +110,13 @@ class channelManager():
             #token 미존재
             print("TOKEN IS NOT EXIST")
 
-    def editChannel(request, token, channel_id, channel_name, channel_desc):
-        user_token = Token.objects.filter(token = token)
+    @api_view(['POST'])
+    def editChannel(request):
+        token = request.data['token']
+        channel_id = uuid.UUID(uuid.UUID(request.data['channel_id']).hex)
+        channel_name = request.data['channel_name']
+        channel_desc = request.data['channel_desc']
+        user_token = Token.objects.filter(key = token)
         data = OrderedDict()
         if(user_token):
             #token 존재
@@ -142,8 +152,11 @@ class channelManager():
         return JsonResponse(data, safe=False)
 
 
-    def deleteChannel(request, token, channel_id):
-        user_token = Token.objects.filter(token = token)
+    @api_view(['POST'])
+    def deleteChannel(request):
+        token = request.data['token']
+        channel_id = uuid.UUID(uuid.UUID(request.data['channel_id']).hex)
+        user_token = Token.objects.filter(key = token)
         if(user_token):
             #token 존재
             channel = Channel.objects.filter(url_id = channel_id)
