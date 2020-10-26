@@ -39,6 +39,7 @@ channel_url_patterns = [
     path('deleteChannel/',channelManager.deleteChannel, name='deleteChannel'),
     path('editChannel/',channelManager.editChannel, name='editChannel'),
     path('enterChannel/',guestChannel.enterChannel, name='enterChannel'),
+    path('requestChannel/',channelManager.requestChannel, name='requestChannel'),
 ]
 
 unit_url_patterns = [

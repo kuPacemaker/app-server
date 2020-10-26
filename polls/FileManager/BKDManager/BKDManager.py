@@ -10,11 +10,11 @@ class bkdManager():
     @api_view(['POST'])
     def requestBKD(request):
         token = request.data['token']
-        unit = uuid.UUID(uuid.UUID(request.data['unit']).hex)
+        unit_id = uuid.UUID(uuid.UUID(request.data['unit_id']).hex)
         user_token = Token.objects.filter(key = token)
         data = OrderedDict()
         if(user_token):
-            unit = Unit.objects.filter(url_id = unit)
+            unit = Unit.objects.filter(url_id = unit_id)
             if(unit):
                 unit_bkd = UnitBKD.objects.get(unit = unit[0])
                 bkd = BKD.objects.filter(id=unit_bkd.bkd.id)
@@ -36,16 +36,16 @@ class bkdManager():
     @api_view(['POST'])
     def createBKD(request):
         token = request.data['token']
-        unit = uuid.UUID(uuid.UUID(request.data['unit']).hex)
+        unit_id = uuid.UUID(uuid.UUID(request.data['unit_id']).hex)
         user_token = Token.objects.filter(key = token)
         data = OrderedDict()
         if(user_token):
-            unit_one = Unit.objects.filter(url_id = unit)
-            if(unit_one):    
-                host = Host.objects.get(channel = unit_one[0].channel)
+            unit = Unit.objects.filter(url_id = unit_id)
+            if(unit):    
+                host = Host.objects.get(channel = unit[0].channel)
                 if(user_token[0].user_id == host.user.id):
                     bkd = BKD.objects.create(title='', body='')
-                    unit_bkd = UnitBKD.objects.create(bkd=bkd, unit=unit_one[0], opened=True)
+                    unit_bkd = UnitBKD.objects.create(bkd=bkd, unit=unit[0], opened=True)
                     bkd_owner = BKDOwner.objects.create(user=host.user, bkd=bkd)
                     bkd = BKD.objects.filter(id = bkd.id)
                     serializer = BKDIDSerializer(bkd,many=True)

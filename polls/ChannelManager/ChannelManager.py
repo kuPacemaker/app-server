@@ -102,13 +102,13 @@ class channelManager():
             else:
                 data["runner"] = []
             
-            json.dumps(data, ensure_ascii=False, indent="\t")
-
-            return JsonResponse(data, safe=False)
-        
         else:
             #token 미존재
-            print("TOKEN IS NOT EXIST")
+            data["message"] = 'TOKEN IS NOT EXIST'
+
+        json.dumps(data, ensure_ascii=False, indent="\t")
+
+        return JsonResponse(data, safe=False)
 
     @api_view(['POST'])
     def editChannel(request):
@@ -131,10 +131,12 @@ class channelManager():
                     channel.save()
 
                     channel = Channel.objects.filter(url_id = channel_id)
-                    serializer = ChannelInfoSerializer(channel, many=True)
+                    serializer = ChannelIDSerializer(channel, many=True)
+                    data["id"] = serializer.data[0]['url_id']
+                    data["title"] = channel[0].name
+                    data["detail"] = channel[0].description
+                    data["image"] = None
 
-                    return JsonResponse(serializer.data[0], safe=False)
-                
                 else:
                     #해당 채널이 user의 것이 아님
                     data["message"] = 'User is not channel\'s host'
@@ -157,24 +159,61 @@ class channelManager():
         token = request.data['token']
         channel_id = uuid.UUID(uuid.UUID(request.data['channel_id']).hex)
         user_token = Token.objects.filter(key = token)
+        data = OrderedDict()
         if(user_token):
             #token 존재
             channel = Channel.objects.filter(url_id = channel_id)
             if(channel):
                 #channel 존재
-                channel = Channel.objects.get(url_id = channel_id)
-                host = Host.objects.get(channel = channel)
-                host.delete()
-                channel.delete()
+                host = Host.objects.filter(channel = channel[0])
+                if(host):
+                    host[0].delete()
+                    channel[0].delete()
+                    data["message"] = 'Success. Channel is deleted'
+                else:
+                    data["message"] = 'User is not channel\'s host'
             else:
                 #channel 미존재
-                print("CHANNEL IS NOT EXIST")
+                data["message"] = 'CHANNEL IS NOT EXIST'
             
         else:
             #token 미존재
-            print("TOKEN IS NOT EXIST")
+            data["message"] = 'TOKEN IS NOT EXIST'
 
+        json.dumps(data, ensure_ascii=False, indent="\t")
 
+        return JsonResponse(data, safe=False)
 
-#def excludeChannelMember():
+    @api_view(['POST'])
+    def requestChannel(request):
+        token = request.data['token']
+        channel_id = uuid.UUID(uuid.UUID(request.data['channel_id']).hex)
+        user_token = Token.objects.filter(key = token)
+        data = OrderedDict()
+        if(user_token):
+            #token 존재
+            channel = Channel.objects.filter(url_id = channel_id)
+            if(channel):
+                #channel 존재
+                serializer = ChannelIDSerializer(channel, many=True)
+                data["id"] = serializer.data[0]['url_id']
+                data["title"] = channel[0].name
+                data["detail"] = channel[0].description
+                data["image"] = None
 
+                guest = Guest.objects.filter(url_id = channel_id)
+                guest_length = len(guest)
+                if(guest_length != 0):
+                    data["runners"] = [0 for i in range(guest_length)]
+                    for i in range(guest_length):
+                        data["runners"][i] = guest[i].user.first_name
+                else:
+                     data["runners"] = []
+            else:
+                 data["message"] = 'Channel is not exist'
+        else:
+             data["message"] = 'Token is not exist'
+
+        json.dumps(data, ensure_ascii=False, indent="\t")
+
+        return JsonResponse(data, safe=False)

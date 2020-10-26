@@ -30,7 +30,6 @@ class hostChannel():
             host = Host.objects.get(channel=channel[0])
             user = User.objects.filter(id=user_token.user_id)
             if(user[0] == host.user):
-                user = User.objects.get(id = host.user_id)
                 unit = Unit.objects.create(channel = channel[0], index=index, name=title)
                 unit_list = Unit.objects.filter(channel=channel[0]).order_by('index')
                 unit_serializer = UnitSerializer(unit_list,many=True)
@@ -39,7 +38,7 @@ class hostChannel():
                 data["id"] = channel_serializer.data[0]['url_id']
                 data["title"] = channel_serializer.data[0]['name']
                 data["detail"] = channel_serializer.data[0]['description']
-                data["leader"] = user.first_name
+                data["leader"] = user[0].first_name
                 data["code"] = channel_serializer.data[0]['accesspath']
                 data["image"] = None
                 data["units"] = [0 for i in range(unit_length)]
@@ -54,6 +53,15 @@ class hostChannel():
                     data["units"][i]["state"]["hasPaper"] = False
                     data["units"][i]["state"]["startQuiz"] = False
                     data["units"][i]["state"]["endQuiz"] = False
+
+                guest = Guest.objects.filter(channel = channel[0])
+                guest_length = len(guest)
+                if(guest_length != 0):
+                    data["runners"] = [0 for i in range(guest_length)]
+                    for i in range(guest_length):
+                        data["runners"][i] = guest[i].user.first_name
+                else:
+                     data["runners"] = []
 
             else:
                 data["message"] = 'User is not this channel\'s host'
@@ -82,7 +90,7 @@ class hostChannel():
                 if(user_token[0].user_id == host[0].user.id):
                     unit = Unit.objects.get(url_id = unit_id)
                     unit.delete()
-                    data["message"] = 'Unit is deleted'
+                    data["message"] = 'Success. Unit is deleted'
 
                 else:
                     data["message"] = 'User is not this Channel\'s host'
