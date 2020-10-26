@@ -59,9 +59,9 @@ class qgapi():
                     unit_bkd = UnitBKD.objects.get(unit = unit[0])
                     bkd = BKD.objects.get(id = unit_bkd.bkd.id)
         
-                    URL = 'https://117.16.136.170/restful/qg'
+                    URL = 'https://117.16.136.170/restful/qg/'
                     data = {'bkd' : bkd.body}
-                    res = requests.post(URL, data=data, verify=False)
+                    res = requests.request('POST', URL, json=data, verify=False)
                     content = res.text
                     nouns = []
                     aqset = []
@@ -72,6 +72,7 @@ class qgapi():
                         aqset += question_data['passages'][i]['aqset']
     
                     qa_set = choiceProblemGenerator.choiceProblemGenerator(nouns,aqset)
+                    unit_qa = UnitQA.objects.create(qaset = qa_set, unit = unit[0])
                     #객관식 문제 생성이 끝난 qa_set에 대해서
                     qa_pair = QAPair.objects.filter(qaset = qa_set)
                     #각 qa_pair를 찾아서
