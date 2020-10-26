@@ -2,20 +2,24 @@ from django.http import JsonResponse
 from polls.models import *
 from polls.serializers import *
 from collections import OrderedDict
+from rest_framework.decorators import api_view
 import json
 import random
 
 class testPaperCollector():
-    def requestPaper(request, token, unit_id):
+    @api_view(['POST'])
+    def requestPaper(request):
+        token = request.data['token']
+        unit_id = request.data['unit_id']
         data = orderedDict()
 
         user_token = Token.objects.filter(key = token)
         unit = Unit.objects.filter(url_id = unit_id)
         if not (user_token.exists()):
             data["message"] = 'Token is not exist'
-        else if not (unit.exists()):
+        elif not (unit.exists()):
             data["message"] = 'Unit is not exist'
-        else if not (TestPlan.objects.filter(unit = unit[0]).exists()):
+        elif not (TestPlan.objects.filter(unit = unit[0]).exists()):
             data["message"] = 'TestPlan is not exist'
         else:
             test = TestPlan.objects.get(unit = unit[0])
@@ -23,7 +27,7 @@ class testPaperCollector():
             if not (TestSet.objects.filter(user = user, test = test).exists()):
                 data["message"] = 'User does not have Test of Unit'
 
-        bool(data):
+        if bool(data):
             json.dumps(data, ensure_ascii=False, indent="\t")
             return JsonResponse(data, safe=False)
 
@@ -63,16 +67,20 @@ class testPaperCollector():
 
         return JsonResponse(data, safe=False)
 
-    def submitPaper(request, token, unit_id, pairs): #pairs = [{"id", "user_answer"}] testpair's id, user_answer
+    @api_view(['POST'])
+    def submitPaper(request): #pairs = [{"id", "user_answer"}] testpair's id, user_answer
+        token = request.data['token']
+        unit_id = request.data['unit_id']
+        pairs = request.data['pairs']
         data = OrderedDict()
 
         user_token = Token.objects.filter(key = token)
         unit = Unit.objects.filter(url_id = unit_id)
         if not (user_token.exists()):
             data["message"] = 'Token is not exist'
-        else if not (unit.exists()):
+        elif not (unit.exists()):
             data["message"] = 'Unit is not exist'
-        else if not (TestPlan.objects.filter(unit = unit[0]).exists()):
+        elif not (TestPlan.objects.filter(unit = unit[0]).exists()):
             data["message"] = 'TestPlan is not exist'
         else:
             test = TestPlan.objects.get(unit = unit[0])

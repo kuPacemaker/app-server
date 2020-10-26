@@ -3,19 +3,24 @@ from polls.models import *
 from polls.serializers import *
 from rest_framework.authtoken.models import Token
 from collections import OrderedDict
+from rest_framework.decorators import api_view
 import json
 
 class considerQuestion():
-    def verifyQuestion(request, token, unit_id, pair_ids):
+    @api_view(['POST'])
+    def verifyQuestion(request):
+        token = request.data['token']
+        unit_id = request.data['unit_id']
+        pair_ids = request.data['pair_ids']
         data = OrderedDict()
 
         user_token = Token.objects.filter(key = token)
         unit = Unit.objects.filter(url_id = unit_id)
         if not (user_token.exists()):
             data["message"] = 'Token is not exist'
-        else if not (unit.exists()):
+        elif not (unit.exists()):
             data["message"] = 'Unit is not exist'
-        else if not (UnitQA.objects.filter(unit = unit[0]).exists()):
+        elif not (UnitQA.objects.filter(unit = unit[0]).exists()):
             data["message"] = 'QASet is not exist'
         else:
             host = Host.objects.get(channel = unit[0].channel)
@@ -49,7 +54,7 @@ class considerQuestion():
             data["questions"][i] = OrderedDict()
             serializer = QAPairSerializer(qapair[i], many=True)
             data["questions"][i]["id"] = serializer.data[0]['url_id']
-            data["questions"][i]["quiz"] = serializer.data[[0]['question']
+            data["questions"][i]["quiz"] = serializer.data[0]['question']
             data["questions"][i]["answer"] = serializer.data[0]['answer']
             data["questions"][i]["user_answer"] = ''
             data["questions"][i]["answer_set"] = serializer.data[0]['answer_set']
@@ -59,16 +64,22 @@ class considerQuestion():
 
         return JsonResponse(data, safe=False)
 
-    def makeReservation(request, token, unit_id, que_number, release_time, end_time):
+    @api_view(['POST'])
+    def makeReservation(request):
+        token = request.data['token']
+        unit_id = request.data['unit_id']
+        que_number = request.data['que_number']
+        release_time = request.data['release_time']
+        end_time = request.data['end_time']
         data = OrderedDict()
 
         user_token = Token.objects.filter(key = token)
         unit = Unit.objects.filter(url_id = unit_id)
         if not (user_token.exists()):
             data["message"] = 'Token is not exist'
-        else if not (unit.exists()):
+        elif not (unit.exists()):
             data["message"] = 'Unit is not exist'
-        else if not (UnitQA.objects.filter(unit = unit[0]).exists()):
+        elif not (UnitQA.objects.filter(unit = unit[0]).exists()):
             data["message"] = 'QASet is not exist'
         else:
             host = Host.objects.get(channel = unit[0].channel)

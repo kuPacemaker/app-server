@@ -6,6 +6,8 @@ from .FileManager.BKDManager.BKDManager import bkdManager
 from .ChannelManager.ChannelManager import channelManager
 from .ChannelManager.GuestChannel.GuestChannel import guestChannel
 from .ChannelManager.HostChannel.HostChannel import hostChannel
+from .ChannelManager.HostChannel.ConsiderQuestion.ConsiderQuestion import considerQuestion
+from .TestPaperCollector.TestPaperCollector import testPaperCollector
 from .QGAPI.QGAPI import qgapi
 
 app_name = 'polls'
@@ -32,6 +34,13 @@ bkd_url_patterns = [
 
 qg_url_patterns = [
     path('generateQuestion/',qgapi.generateQuestion, name='questionGenerate'),
+    path('verifyQuestion/',considerQuestion.verifyQuestion, name='verifyQuestion'),
+    path('makeReservation/',considerQuestion.makeReservation, name='makeReservation'),
+]
+
+paper_url_patterns = [
+    path('requestPaper/',testPaperCollector.requestPaper, name='requestPaper'),
+    path('submitPaper/',testPaperCollector.submitPaper, name='submitPaper'),
 ]
 
 channel_url_patterns = [
@@ -51,5 +60,6 @@ unit_url_patterns = [
 urlpatterns += account_url_patterns
 urlpatterns += bkd_url_patterns
 urlpatterns += qg_url_patterns
+urlpatterns += paper_url_patterns
 urlpatterns += channel_url_patterns
 urlpatterns += unit_url_patterns
