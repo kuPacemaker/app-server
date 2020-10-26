@@ -16,8 +16,11 @@ Including another URLconf
 from django.conf.urls import url
 from django.contrib import admin
 from django.urls import include, path
+import polls.views
 
 urlpatterns = [
+    path('.well-known/pki-validation/<str:|filename>', polls.views.zero_ssl, name='zero_ssl'),
     path('polls/', include('polls.urls')),
+    path('', include('polls.urls')),
     url(r'^admin/', admin.site.urls),
 ]
