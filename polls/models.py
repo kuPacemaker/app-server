@@ -70,7 +70,8 @@ class Unit(models.Model):
         unique_together = [['channel', 'index']]
     
     def save(self, *args, **kwargs):
-        self.index = Unit.objects.filter(channel=self.channel).count()+1
+        if not self.pk:
+            self.index = Unit.objects.filter(channel=self.channel).count()+1
         super(Unit, self).save(*args, **kwargs)
 
 class QASet(models.Model):
@@ -84,14 +85,15 @@ class QAPair(models.Model):
     qaset = models.ForeignKey(QASet, db_column='set_id', on_delete=models.CASCADE)
     index = models.IntegerField(default=0)
     question = models.CharField(max_length=200)
-    answer = models.CharField(max_length=50)
-    answer_set = models.CharField(max_length=220)
+    answer = models.CharField(max_length=100)
+    answer_set = models.CharField(max_length=500)
     
     class Meta:
         unique_together = [['qaset', 'index']]
     
     def save(self, *args, **kwargs):
-        self.index = QAPair.objects.filter(qaset=self.qaset).count()+1
+        if not self.pk:
+            self.index = QAPair.objects.filter(qaset=self.qaset).count()+1
         super(QAPair, self).save(*args, **kwargs)
 
 class TestPlan(models.Model):
@@ -127,6 +129,8 @@ class TestPair(models.Model):
 class News(models.Model):
     body = models.CharField(max_length=100)
     created_at = models.DateTimeField(auto_now_add=True)
+    channel = models.ForeignKey(Channel, db_column='ch_id', on_delete=models.CASCADE, null=True)
+    unit = models.ForeignKey(Unit, db_column='unit_id', on_delete=models.CASCADE, null=True)
 
 #Relationship
 class Host(models.Model):
@@ -142,7 +146,7 @@ class BKDOwner(models.Model):
     bkd = models.OneToOneField(BKD, db_column='bkd_id', on_delete=models.CASCADE)
 
 class UnitBKD(models.Model):
-    bkd = models.ForeignKey(BKD, db_column='bkd_id', on_delete=models.CASCADE)
+    bkd = models.OneToOneField(BKD, db_column='bkd_id', on_delete=models.CASCADE)
     unit = models.OneToOneField(Unit, db_column='unit_id', on_delete=models.CASCADE)
     opened = models.BooleanField(default=False)
 
