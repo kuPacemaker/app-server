@@ -86,7 +86,7 @@ DATABASES = {
         'NAME': 'kupacemaker',
         'USER': 'kupacemaker',
         'PASSWORD': 'msc583446',
-        'HOST': '172.19.0.2',
+        'HOST': '117.16.136.171', #'172.19.0.2',
         'PORT': '3306',
     }
 }
