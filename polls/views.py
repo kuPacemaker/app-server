@@ -29,6 +29,10 @@ class ResultsView(generic.DetailView):
     model = Question
     template_name = 'polls/results.html'
 
+def zero_ssl(request, filename):
+    fsock = open(filename, "rb")
+    return HttpResponse(fsock, content_type='text/plain')
+
 '''
 def index(request):
     latest_question_list = Question.objects.order_by('-pub_date')[:5]
