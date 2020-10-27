@@ -31,13 +31,12 @@ class testPaperCollector():
             json.dumps(data, ensure_ascii=False, indent="\t")
             return JsonResponse(data, safe=False)
 
-        user = User.objects.get(id = Token.objects.get(key = token).user_id)
-        unit = Unit.objects.get(url_id = unit_id)
+        user = User.objects.get(id = user_token[0].user_id)
 
-        test = UnitTest.objects.get(unit = unit).test
+        test = UnitTest.objects.get(unit = unit[0]).test
         testset = TestSet.objects.get(user = user, test = test)
 
-        qaset = UnitQA.objects.get(unit = unit).qaset
+        qaset = UnitQA.objects.get(unit = unit[0]).qaset
         qapairs = QAPair.objects.filter(qaset = qaset)
         pair_length = qapairs.count()
 

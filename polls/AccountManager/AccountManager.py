@@ -19,30 +19,23 @@ class accountManager():
             user = User.objects.get(username = uid)
             #DB에 저장된 email이 uid와 일치함
             if(user.password == pw):
-                #DB에 저장된 email과 쌍을 이루는 password가 upw와 일치함
-                print("LOGIN SUCCESS")
-                
+                #DB에 저장된 email과 쌍을 이루는 password가 upw와 일치함                
                 token = Token.objects.filter(user_id = user.id)
                 serializer = TokenSerializer(token, many=True)
 
+                data["state"] = "success"
                 data["id"] = user.username
                 data["name"] = user.first_name
                 data["type"] = None
                 data["token"] = serializer.data[0]['key']
             else:
                 #password와 upw가 일치하지 않음
-                print("PASSWORD WRONG")
-                data["id"] = None
-                data["name"] = None
-                data["type"] = None
-                data["token"] = None
+                data["state"] = "fail"
+                data["message"] = "Password is wrong."
         else:
             #DB에 email이 존재하지 않음
-            print("EMAIL WRONG")
-            data["id"] = None
-            data["name"] = None
-            data["type"] = None
-            data["token"] = None
+            data["state"] = "fail"
+            data["message"] = "ID is not exist."
 
         json.dumps(data, ensure_ascii=False, indent="\t")
 
@@ -58,11 +51,13 @@ class accountManager():
         if(user):
             #DB에 uid가 이미 존재함
             print("EMAIL EXIST")
-            data["message"] = "Fail. Email is already exist."
+            data["state"] = "fail"
+            data["message"] = "ID is already exist."
         else:        
             #존재하지 않으므로 사용 가능함
             user = User.objects.create(username = uid, password = pw, first_name = name)
-            data["message"] = "Success."
+            data["state"] = "success."
+            data["message"] = "Sign up completed."
 
         json.dumps(data, ensure_ascii=False, indent="\t")
 
@@ -79,11 +74,12 @@ class accountManager():
             new_password = emailSender.sendEmail(uid) #반환값을 DB에 저장할 목적
             user.password = new_password
             user.save()
-            data["message"] = "Success. E-Mail sended."
+            data["state"] = "success"
+            data["message"] = "E-Mail sended."
         else:
             #DB에 email과 일치하는 uid가 없음
-            print("EMAIL IS NOT EXIST")
-            data["message"] = "Fail. E-Mail is not exist."
+            data["state"] = "fail"
+            data["message"] = "E-Mail is not exist."
 
         json.dumps(data, ensure_ascii=False, indent="\t")
 
@@ -105,13 +101,17 @@ class accountManager():
                     user[0].first_name = name
                     user[0].password = pw_new
                     user[0].save()
-                    data["message"] = 'Success.'
+                    data["state"] = "success"
+                    data["message"] = "Save completed."
                 else:
+                    data["state"] = "fail"
                     data["message"] = 'Password is wrong'
             else:
-                data["message"] = 'E-mail is not exist'
+                data["state"] = "fail"
+                data["message"] = "E-mail is not exist"
         else:
-            data["message"] = 'Token is not exist'
+            data["state"] = "fail"
+            data["message"] = "Token is not exist"
 
         json.dumps(data, ensure_ascii = False, indent = "\t")
 
