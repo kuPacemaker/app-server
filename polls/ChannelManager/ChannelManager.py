@@ -175,16 +175,20 @@ class channelManager():
                 if(host):
                     host[0].delete()
                     channel[0].delete()
-                    data["message"] = 'Success. Channel is deleted'
+                    data["state"] = "success"
+                    data["message"] = "Channel is deleted."
                 else:
-                    data["message"] = 'User is not channel\'s host'
+                    data["state"] = "fail"
+                    data["message"] = "User is not channel\'s host"
             else:
                 #channel 미존재
-                data["message"] = 'CHANNEL IS NOT EXIST'
+                data["state"] = "fail"
+                data["message"] = "Channel is not exist"
             
         else:
             #token 미존재
-            data["message"] = 'TOKEN IS NOT EXIST'
+            data["state"] = "fail"
+            data["message"] = "Token is not exist"
 
         json.dumps(data, ensure_ascii=False, indent="\t")
 
@@ -201,6 +205,7 @@ class channelManager():
             channel = Channel.objects.filter(url_id = channel_id)
             if(channel):
                 #channel 존재
+                data["state"] = "success"
                 serializer = ChannelIDSerializer(channel, many=True)
                 data["id"] = serializer.data[0]['url_id']
                 data["title"] = channel[0].name
@@ -216,9 +221,11 @@ class channelManager():
                 else:
                      data["runners"] = []
             else:
-                 data["message"] = 'Channel is not exist'
+                 data["state"] = "fail"
+                 data["message"] = "Channel is not exist"
         else:
-             data["message"] = 'Token is not exist'
+             data["state"] = "fail"
+             data["message"] = "Token is not exist"
 
         json.dumps(data, ensure_ascii=False, indent="\t")
 
