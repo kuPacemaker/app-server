@@ -118,7 +118,7 @@ class considerQuestion():
         channel = unit[0].channel
         guests = Guest.objects.filter(channel = channel)
         for guest in guests:
-            TestSet.objects.create(user = guest, test = new_testplan)
+            TestSet.objects.create(user = guest.user, test = new_testplan)
 
         data["state"] = "success"
         data["message"] = "Reservation saved"
