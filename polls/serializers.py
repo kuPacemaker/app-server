@@ -56,3 +56,13 @@ class TestPairIDSerializer(serializers.ModelSerializer):
     class Meta:
         model = TestPair
         fields = ('url_id',)
+
+class NewsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = News
+        fields = ('ntype','title','body')
+
+class UnitIDSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Unit
+        fields = ('url_id',)

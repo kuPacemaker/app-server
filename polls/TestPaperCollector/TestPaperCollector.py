@@ -1,6 +1,7 @@
 from django.http import JsonResponse
 from polls.models import *
 from polls.serializers import *
+from polls.QGAPI.QGAPI import qgapi
 from collections import OrderedDict
 from rest_framework.decorators import api_view
 import json, uuid
@@ -74,7 +75,7 @@ class testPaperCollector():
             data["questions"][i]["id"] = serializer.data[i]['url_id']
             data["questions"][i]["index"] = i+1
             data["questions"][i]["question"] = testpair[i].pair.question
-            data["questions"][i]["answer_set"] = testpair[i].pair.answer_set
+            data["questions"][i]["answer_set"] = qgapi.stringWithSlash(testpair[i].pair.answer_set)
 
         json.dumps(data, ensure_ascii=False, indent="\t")
 

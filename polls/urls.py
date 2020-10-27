@@ -3,6 +3,7 @@ from django.urls import path
 from . import views
 from .AccountManager.AccountManager import accountManager
 from .FileManager.BKDManager.BKDManager import bkdManager
+from .FeedManager.FeedManager import feedManager
 from .ChannelManager.ChannelManager import channelManager
 from .ChannelManager.GuestChannel.GuestChannel import guestChannel
 from .ChannelManager.HostChannel.HostChannel import hostChannel
@@ -13,9 +14,6 @@ from .QGAPI.QGAPI import qgapi
 app_name = 'polls'
 urlpatterns = [
     path('', views.IndexView.as_view(), name='index'),
-    path('<int:pk>/', views.DetailView.as_view(), name='detail'),
-    path('<int:pk>/results/', views.ResultsView.as_view(), name='results'),
-    path('<int:question_id>/vote/', views.vote, name='vote'),
 ]
 
 account_url_patterns = [
@@ -54,6 +52,12 @@ channel_url_patterns = [
 unit_url_patterns = [
     path('createUnit/',hostChannel.createUnit, name='createUnit'),
     path('deleteUnit/',hostChannel.deleteUnit, name='deleteUnit'),
+    path('requestUnit/',channelManager.requestUnit, name='requestUnit'),
+]
+
+feed_board_url_patterns = [
+    path('requestBoard/',channelManager.requestBoard, name='requestBoard'),
+    path('refresh/',feedManager.refresh, name='refresh'),
 ]
 
 #urlpatterns = []
@@ -63,3 +67,4 @@ urlpatterns += qg_url_patterns
 urlpatterns += paper_url_patterns
 urlpatterns += channel_url_patterns
 urlpatterns += unit_url_patterns
+urlpatterns += feed_board_url_patterns

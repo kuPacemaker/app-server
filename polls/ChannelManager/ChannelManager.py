@@ -2,6 +2,7 @@ from django.http import JsonResponse
 from polls.models import *
 from rest_framework.authtoken.models import Token
 from polls.serializers import *
+from polls.QGAPI.QGAPI import qgapi
 from .HostChannel.ChannelJoinCodeGenerator.ChannelJoinCodeGenerator import channelJoinCodeGenerator
 from collections import OrderedDict
 from rest_framework.decorators import api_view
@@ -226,6 +227,142 @@ class channelManager():
         else:
              data["state"] = "fail"
              data["message"] = "Token is not exist"
+
+        json.dumps(data, ensure_ascii=False, indent="\t")
+
+        return JsonResponse(data, safe=False)
+
+    @api_view(['POST'])
+    def requestUnit(request):
+        token = request.data['token']
+        unit_id = uuid.UUID(uuid.UUID(request.data['unit_id']).hex)
+        data = OrderedDict()
+
+        user_token = Token.objects.filter(key = token)
+        unit = Unit.objects.filter(url_id = unit_id)
+        if not (user_token.exists()):
+            data["state"] = "fail"
+            data["message"] = "Token is not exist"
+        elif not (unit.exists()):
+            data["state"] = "fail"
+            data["message"] = "Unit is not exist"
+        else:
+            user = User.objects.get(id = user_token[0].user_id)
+            hosts = Host.objects.filter(user = user, channel = unit[0].channel)
+            guests = Guest.objects.filter(user = user, channel = user[0].channel)
+            if not (hosts.exists() and guests.exists()):
+                data["state"] = "fail"
+                data["message"] = "User is neither host nor guest of Channel"
+
+        if bool(data):
+            json.dumps(data, ensure_ascii=False, indent="\t")
+            return JsonResponse(data, safe=False)
+
+        user = User.objects.get(id = user_token[0].user_id)
+        unit = Unit.objects.filter(url_id = unit_id)
+        channel = Channel.objects.filter(id = unit[0].channel.id)
+
+        data["state"] = "success"
+        serializer = ChannelInfoSerializer(channel, many=True)
+        data["channel"]["id"] = serializer.data[0]['url_id']
+        data["channel"]["title"] = serializer.data[0]['name']
+        data["channel"]["detail"] = serializer.data[0]['description']
+        data["channel"]["code"] = serializer.data[0]['accesspath']
+
+        serializer = UnitSerializer(unit, many=True)
+        data["unit"]["id"] = serializer.data[0]['url_id']
+        data["unit"]["index"] = serializer.data[0]['index']
+        data["unit"]["title"] = serializer.data[0]['name']
+        data["unit"]["isOpened"] = True
+
+        unit_bkd = UnitBKD.objects.filter(unit = unit[0])
+        if (unit_bkd):
+            bkd = BKD.objects.filter(id = unit_bkd[0].bkd.id)
+            serializer = BKDSerializer(bkd, many=True)
+            data["unit"]["document"]["id"] = serializer.data[0]['url_id']
+            data["unit"]["document"]["visible"] = unit_bkd[0].opened
+            data["unit"]["document"]["title"] = bkd[0].title
+            data["unit"]["document"]["body"] = bkd[0].body
+        else:
+            data["unit"]["document"]["id"] = None
+            data["unit"]["document"]["visible"] = None
+            data["unit"]["document"]["title"] = None
+            data["unit"]["document"]["body"] = None
+
+        if (UnitQA.objects.filter(unit = unit[0]).exists()):
+            qaset = UnitQA.objects.get(unit = unit[0]).qaset
+
+            if (UnitTest.objects.filter(unit = unit[0]).exists()):
+                test = UnitTest.objects.get(unit = unit[0]).test
+                data["paper"]["isStart"] = test.released
+                data["paper"]["isEnd"] = test.ended
+            else:
+                data["paper"]["isStart"] = None
+                data["paper"]["isEnd"] = None
+
+            qapairs = QAPair.objects.filter(qaset = qaset)
+            qapair_length = qapairs.count()
+            serializer = QAPairSerializer(qapairs, many=True)
+            data["paper"]["questions"] = [0 for i in range(qapair_length)]
+            for i in range(qapair_length):
+                data["paper"]["questions"][i] = OrderedDict()
+                data["paper"]["questions"][i]["id"] = serializer.data[i]['url_id']
+                data["paper"]["questions"][i]["quiz"] = qapairs[i].question
+                data["paper"]["questions"][i]["answer"] = qapairs[i].answer
+                data["paper"]["questions"][i]["user_answer"] = ''
+                data["paper"]["questions"][i]["answer_set"] = qgapi.stringWithSlash(qapairs[i].answer_set)
+                data["paper"]["questions"][i]["verified"] = True
+
+        else:
+            data["paper"]["isStart"] = False
+            data["paper"]["isEnd"] = False
+            data["paper"]["questions"] = None
+
+        json.dumps(data, ensure_ascii=False, indent="\t")
+
+        return JsonResponse(data, safe=False)
+
+    @api_view(['POST'])
+    def requestBoard(request):
+        token = request.data['token']
+        data = OrderedDict()
+
+        user_token = Token.objects.filter(key = token)
+        if not (user_token.exists()):
+            data["state"] = "fail"
+            data["message"] = "Token is not exist"
+
+        if bool(data):
+            json.dumps(data, ensure_ascii=False, indent="\t")
+            return JsonResponse(data, safe=False)
+
+        data["state"] = "success"
+
+        user = User.objects.get(id = user_token[0].user_id)
+
+        hosts = Host.objects.filter(user = user)
+        host_channel = Channel.objects.filter(id__in = hosts.values_list('channel', flat=True))
+        host_length = host_channel.count()
+        serializer = ChannelInfoSerializer(host_channel, many=True)
+        data["leader"] = [0 for i in range(host_length)]
+        for i in range(host_length):
+            data["leader"][i] = OrderedDict()
+            data["leader"][i]["id"] = serializer.data[i]['url_id']
+            data["leader"][i]["title"] = serializer.data[i]['name']
+            data["leader"][i]["detail"] = serializer.data[i]['description']
+            data["leader"][i]["image"] = None
+
+        guests = Guest.objects.filter(user = user)
+        guest_channel = Channel.objects.filter(id__in = guest.values_list('channel', flat=True))
+        guest_length = guest_channel.count()
+        serializer = ChannelInfoSerializer(guest_channel, many=True)
+        data["runner"] = [0 for i in range(guest_length)]
+        for i in range(guest_length):
+            data["runner"][i] = OrderedDict()
+            data["runner"][i]["id"] = serializer.data[i]['url_id']
+            data["runner"][i]["title"] = serializer.data[i]['name']
+            data["runner"][i]["detail"] = serializer.data[i]['description']
+            data["runner"][i]["image"] = None
 
         json.dumps(data, ensure_ascii=False, indent="\t")
 
