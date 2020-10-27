@@ -80,9 +80,9 @@ class hostChannel():
     @api_view(['POST'])
     def editUnit(request):
         token = request.data['token']
-        unit_id = uuid.UUID(uuid.UUID(request.dat['unit_id']).hex)
+        unit_id = uuid.UUID(uuid.UUID(request.data['unit_id']).hex)
         index = request.data['index']
-        name = request.data['name']
+        title = request.data['title']
         user_token = Token.objects.filter(key = token)
         data = OrderedDict()
         if(user_token):
@@ -95,8 +95,8 @@ class hostChannel():
                     unit = Unit.objects.get(url_id = unit_id)
                     if(not exist_unit):
                         unit.index = index
-                    if(name != ""):
-                        unit.name = name
+                    if(title != ""):
+                        unit.name = title
                     unit.save()
 
                     data["state"] = "success"
