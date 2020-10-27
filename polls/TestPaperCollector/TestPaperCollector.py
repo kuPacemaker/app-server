@@ -11,7 +11,7 @@ class testPaperCollector():
     def requestPaper(request):
         token = request.data['token']
         unit_id = request.data['unit_id']
-        data = orderedDict()
+        data = OrderedDict()
 
         user_token = Token.objects.filter(key = token)
         unit = Unit.objects.filter(url_id = unit_id)
