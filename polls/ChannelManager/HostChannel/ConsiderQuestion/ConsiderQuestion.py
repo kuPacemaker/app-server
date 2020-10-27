@@ -55,6 +55,7 @@ class considerQuestion():
         data["isEnd"] = False
         i = 0
         qapairs = QAPair.objects.filter(qaset = qaset)
+        data["questions"] = [0 for i in range(qapairs.count())]
         for i in range(qapairs.count()):
             data["questions"][i] = OrderedDict()
             serializer = QAPairSerializer(qapair[i], many=True)
