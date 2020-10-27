@@ -12,6 +12,11 @@ class considerQuestion():
         token = request.data['token']
         unit_id = request.data['unit_id']
         pair_ids = request.data['pair_ids']
+        pair_id_length = len(pair_ids)
+        pair_id_list = [0 for i in range(pair_id_length)]
+        for i in range(pair_id_length):
+            pair_id_list += pair_ids[i]['pair_id']
+
         data = OrderedDict()
 
         user_token = Token.objects.filter(key = token)
@@ -34,7 +39,7 @@ class considerQuestion():
 
         unit = Unit.objects.get(url_id = unit_id)
         qaset = UnitQA.objects.get(unit = unit).qaset
-        for pair_id in pair_ids:
+        for pair_id in pair_id_list:
             qapair = QAPair.objects.get(url_id = pair_id)
             qapair.delete()
 
@@ -58,7 +63,7 @@ class considerQuestion():
             data["questions"][i]["answer"] = serializer.data[0]['answer']
             data["questions"][i]["user_answer"] = ''
             data["questions"][i]["answer_set"] = serializer.data[0]['answer_set']
-            data["question"][i]["verified"] = True
+            data["questions"][i]["verified"] = True
 
         json.dumps(data, ensure_ascii=False, indent="\t")
 

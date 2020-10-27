@@ -201,7 +201,7 @@ class channelManager():
                 data["detail"] = channel[0].description
                 data["image"] = None
 
-                guest = Guest.objects.filter(url_id = channel_id)
+                guest = Guest.objects.filter(channel = channel[0])
                 guest_length = len(guest)
                 if(guest_length != 0):
                     data["runners"] = [0 for i in range(guest_length)]
