@@ -129,8 +129,10 @@ class channelManager():
                 host = Host.objects.filter(channel = channel[0])
                 if(host.user.id == user_token[0].user_id):
                     channel = Channel.objects.get(url_id = channel_id)
-                    channel.name = channel_name
-                    channel.description = channel_desc
+                    if(channel_name != ""):
+                        channel.name = channel_name
+                    if(channel_desc != ""):
+                        channel.description = channel_desc
                     channel.save()
 
                     data["state"] = "success"

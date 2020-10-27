@@ -51,6 +51,7 @@ channel_url_patterns = [
 
 unit_url_patterns = [
     path('createUnit/',hostChannel.createUnit, name='createUnit'),
+    path('editUnit/',hostChannel.editUnit, name='editUnit'),
     path('deleteUnit/',hostChannel.deleteUnit, name='deleteUnit'),
     path('requestUnit/',channelManager.requestUnit, name='requestUnit'),
 ]

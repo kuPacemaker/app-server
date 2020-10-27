@@ -80,9 +80,12 @@ class bkdManager():
                 user = User.objects.get(id=user_token[0].user_id)
                 bkd_owner = BKDOwner.objects.filter(user=user)
                 if(bkd_owner):
-                    bkd[0].opened = visible
-                    bkd[0].title = title
-                    bkd[0].body = body
+                    if(visible != ""):
+                        bkd[0].opened = visible
+                    if(title != ""):
+                        bkd[0].title = title
+                    if(body != ""):
+                        bkd[0].body = body
                     bkd[0].save()
 
                     serializer = BKDIDSerializer(bkd,many=True)

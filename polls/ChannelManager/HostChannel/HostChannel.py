@@ -77,7 +77,47 @@ class hostChannel():
 
         return JsonResponse(data, safe=False)
 
-#def editUnit(request, token, cid, cname, cdesc):
+    @api_view(['POST'])
+    def editUnit(request):
+        token = request.data['token']
+        unit_id = uuid.UUID(uuid.UUID(request.dat['unit_id']).hex)
+        index = request.data['index']
+        name = request.data['name']
+        user_token = Token.objects.filter(key = token)
+        data = OrderedDict()
+        if(user_token):
+            #토큰 존재
+            unit = Unit.objects.filter(url_id = unit_id)
+            if(unit):
+                host = Host.objects.filter(channel = unit[0].channel)
+                if(user_token[0].user_id == host[0].user.id):
+                    exist_unit = Unit.objects.filter(channel = unit[0].channel, index = index)
+                    unit = Unit.objects.get(url_id = unit_id)
+                    if(not exist_unit):
+                        unit.index = index
+                    if(name != ""):
+                        unit.name = name
+                    unit.save()
+
+                    data["state"] = "success"
+                    unit = Unit.objects.filter(url_id = unit_id)
+                    serializer = UnitSerializer(unit, many=True)
+                    data["id"] = serializer.data[0]['url_id']
+                    data["index"] = unit[0].index
+                    data["title"] = unit[0].name
+                else:
+                    data["state"] = "fail"
+                    data["message"] = "User is not channel\'s host"
+            else:
+                data["state"] = "fail"
+                data["message"] = "Unit is not exist"
+        else:
+            data["state"] = "fail"
+            data["message"] = "Token is not exist"
+
+        json.dumps(data, ensure_ascii=False, indent="\t")
+
+        return JsonResponse(data, safe=False)
 
     @api_view(['POST'])
     def deleteUnit(request):
