@@ -12,6 +12,7 @@ class considerQuestion():
         token = request.data['token']
         unit_id = request.data['unit_id']
         pair_ids = request.data['pair_ids']
+        print(pair_ids)
         pair_id_length = len(pair_ids)
         pair_id_list = [0 for i in range(pair_id_length)]
         for i in range(pair_id_length):
