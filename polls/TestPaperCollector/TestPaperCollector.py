@@ -53,7 +53,7 @@ class testPaperCollector():
 
         for index in pair_list:
             qapair = QAPair.objects.get(qaset = qaset, index = index)
-            TestPair.objects.create(tset = testset, qapair = qapair)
+            TestPair.objects.create(tset = testset, pair = qapair)
 
         testset.received = True
         testset.save()
