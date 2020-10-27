@@ -20,7 +20,7 @@ class guestChannel():
                 data["state"] = "fail"
                 data["message"] = "Channel is not exist"
             else:
-                user_token = Token.objects.get(token = token)
+                user_token = Token.objects.get(key = token)
                 user = User.objects.get(id = user_token.user_id)
                 host = Host.objects.filter(user=user)
                 if(host):
