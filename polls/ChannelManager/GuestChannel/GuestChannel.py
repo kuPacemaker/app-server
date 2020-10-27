@@ -17,20 +17,23 @@ class guestChannel():
         if(user_token):
             if(not channel):
                 #입장코드와 일치하는 채널이 존재하지 않음
-                data["message"] = 'Channel is not exist'
+                data["state"] = "fail"
+                data["message"] = "Channel is not exist"
             else:
                 user_token = Token.objects.get(token = token)
                 user = User.objects.get(id = user_token.user_id)
                 host = Host.objects.filter(user=user)
                 if(host):
                     #호스트가 자기자신의 채널로 입장을 시도하면 입장불가
-                    data["message"] = 'Host cannot enter their own channel'
+                    data["state"] = "fail"
+                    data["message"] = "Host cannot enter their own channel"
                 else:
                     host_channel_list = channelManager.requestHostChannelList(token)
                     guest_channel_list = channelManager.requestGuestChannelList(token)
                     host_length = len(host_channel_list)
                     guest_length = len(guest_channel_list)
-
+        
+                    data["state"] = "success"
                     if(host_length != 0):
                         data["leader"] = [0 for i in range(host_length)]
                         for i in range(host_length):
@@ -68,12 +71,13 @@ class guestChannel():
                     channel = Channel.objects.get(accesspath = accesscode)
                     Guest.objects.create(user=user,channel=channel)
             
-            json.dumps(data, ensure_ascii=False, indent="\t")
-
-            return JsonResponse(data, safe=False)
-            
         else:
-            print("TOKEN IS NOT EXIST")
+            data["state"] = "fail"
+            data["message"] = "Token is not exist"
+
+        json.dumps(data, ensure_ascii=False, indent="\t")
+
+        return JsonResponse(data, safe=False)
         
 
 #def browseGuestChapter():

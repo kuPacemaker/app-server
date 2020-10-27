@@ -51,3 +51,8 @@ class UnitSerializer(serializers.ModelSerializer):
     class Meta:
         model = Unit
         fields = ('url_id','channel','index','name')
+
+class TestPairIDSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = TestPair
+        fields = ('url_id',)

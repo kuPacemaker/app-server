@@ -35,6 +35,7 @@ class hostChannel():
                 unit_serializer = UnitSerializer(unit_list,many=True)
                 unit_length = len(unit_list)       
 
+                data["state"] = "success"
                 data["id"] = channel_serializer.data[0]['url_id']
                 data["title"] = channel_serializer.data[0]['name']
                 data["detail"] = channel_serializer.data[0]['description']
@@ -64,11 +65,13 @@ class hostChannel():
                      data["runners"] = []
 
             else:
-                data["message"] = 'User is not this channel\'s host'
+                data["state"] = "fail"
+                data["message"] = "User is not this channel\'s host"
 
         else:
             #token 미존재
-            data["message"] = 'Token is not exist'
+            data["state"] = "fail"
+            data["message"] = "Token is not exist"
 
         json.dumps(data, ensure_ascii=False, indent="\t")
 
@@ -90,14 +93,18 @@ class hostChannel():
                 if(user_token[0].user_id == host[0].user.id):
                     unit = Unit.objects.get(url_id = unit_id)
                     unit.delete()
-                    data["message"] = 'Success. Unit is deleted'
+                    data["state"] = "success"
+                    data["message"] = "Unit is deleted."
 
                 else:
-                    data["message"] = 'User is not this Channel\'s host'
+                    data["state"] = "fail"
+                    data["message"] = "User is not this Channel\'s host"
             else:
-                data["message"] = 'Unit is not exist'
+                data["state"] = "fail"
+                data["message"] = "Unit is not exist"
         else:
-            data["message"] = 'TOKEN IS NOT EXIST'
+            data["state"] = "fail"
+            data["message"] = "Token is not exist"
 
         json.dumps(data, ensure_ascii=False, indent="\t")
 

@@ -21,16 +21,20 @@ class considerQuestion():
         user_token = Token.objects.filter(key = token)
         unit = Unit.objects.filter(url_id = unit_id)
         if not (user_token.exists()):
-            data["message"] = 'Token is not exist'
+            data["state"] = "fail"
+            data["message"] = "Token is not exist"
         elif not (unit.exists()):
-            data["message"] = 'Unit is not exist'
+            data["state"] = "fail"
+            data["message"] = "Unit is not exist"
         elif not (UnitQA.objects.filter(unit = unit[0]).exists()):
-            data["message"] = 'QASet is not exist'
+            data["state"] = "fail"
+            data["message"] = "QASet is not exist"
         else:
             host = Host.objects.get(channel = unit[0].channel)
             user = User.objects.get(id = user_token[0].user_id)
             if not (user == host.user):
-                data["message"] = 'User is not host of Channel'
+                data["state"] = "fail"
+                data["message"] = "User is not this channel\'s host"
 
         if bool(data):
             json.dumps(data, ensure_ascii=False, indent="\t")
@@ -50,6 +54,7 @@ class considerQuestion():
             i = i+1
 
         #data
+        data["state"] = "success"
         data["isStart"] = False
         data["isEnd"] = False
         i = 0
@@ -74,8 +79,8 @@ class considerQuestion():
         token = request.data['token']
         unit_id = uuid.UUID(uuid.UUID(request.data['unit_id']).hex)
         que_number = request.data['que_number']
-        release_time = request.data['release_time']
-        end_time = request.data['end_time']
+#release_time = request.data['release_time']
+#end_time = request.data['end_time']
         data = OrderedDict()
 
         print(release_time, end_time)
@@ -83,16 +88,20 @@ class considerQuestion():
         user_token = Token.objects.filter(key = token)
         unit = Unit.objects.filter(url_id = unit_id)
         if not (user_token.exists()):
-            data["message"] = 'Token is not exist'
+            data["state"] = "fail"
+            data["message"] = "Token is not exist"
         elif not (unit.exists()):
-            data["message"] = 'Unit is not exist'
+            data["state"] = "fail"
+            data["message"] = "Unit is not exist"
         elif not (UnitQA.objects.filter(unit = unit[0]).exists()):
-            data["message"] = 'QASet is not exist'
+            data["state"] = "fail"
+            data["message"] = "QASet is not exist"
         else:
             host = Host.objects.get(channel = unit[0].channel)
             user = User.objects.get(id = user_token[0].user_id)
             if not (user == host.user):
-                data["message"] = 'User it no host of Channel'
+                data["state"] = "fail"
+                data["message"] = "User is not Channel\'s host"
 
         if bool(data):
             json.dumps(data, ensure_ascii=False, indent="\t")
@@ -101,8 +110,9 @@ class considerQuestion():
         qaset = UnitQA.objects.get(unit = unit[0]).qaset
         new_testplan = TestPlan.objects.create(qaset = qaset)
         new_testplan.que_number = que_number
-        new_testplan.release_time = release_time
-        new_testplan.end_time = end_time
+#배포시간과 마감시간 설정부분
+#new_testplan.release_time = release_time
+#new_testplan.end_time = end_time
         new_testplan.save()
 
         UnitTest.objects.create(unit = unit[0], test = new_testplan)
@@ -112,7 +122,8 @@ class considerQuestion():
         for guest in guests:
             TestSet.objects.create(user = guest, test = new_testplan)
 
-        data["message"] = 'Reservation saved'
+        data["state"] = "success"
+        data["message"] = "Reservation saved"
 
         json.dumps(data, ensure_ascii=False, indent="\t")
 
