@@ -62,7 +62,7 @@ class feedManager():
         guests = Guest.objects.filter(user = user)
         guest_channel = Guest.objects.filter(id__in = guests.values_list('channel', flat=True))
         guest_length = guest_channel.count()
-        serializer = ChannelInfoSerializer(guset_channel, many=True)
+        serializer = ChannelInfoSerializer(guest_channel, many=True)
         data["board"]["runner"] = [0 for i in range(guest_length)]
         for i in range(guest_length):
             data["board"]["runner"][i] = OrderedDict()
