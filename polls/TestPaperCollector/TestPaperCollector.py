@@ -70,10 +70,10 @@ class testPaperCollector():
         testpair = TestPair.objects.filter(tset = testset)
         serializer = TestPairIDSerializer(testpair, many=True)
         for i in range(test.que_number):
-            data["question"][i]["id"] = serializer.data[i]['url_id']
-            data["question"][i]["index"] = i+1
-            data["question"][i]["question"] = testpair[i].qapair.question
-            data["question"][i]["answer_set"] = testpair[i].qapair.answer_set
+            data["questions"][i]["id"] = serializer.data[i]['url_id']
+            data["questions"][i]["index"] = i+1
+            data["questions"][i]["question"] = testpair[i].qapair.question
+            data["questions"][i]["answer_set"] = testpair[i].qapair.answer_set
 
         json.dumps(data, ensure_ascii=False, indent="\t")
 
