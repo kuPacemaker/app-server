@@ -65,7 +65,8 @@ class channelManager():
             guest_channel_list = channelManager.requestGuestChannelList(token)
             host_length = len(host_channel_list)
             guest_length = len(guest_channel_list)
-
+        
+            data["state"] = "success"
             data["leader"] = [0 for i in range(host_length+1)]
             for i in range(host_length):
                 #기존의 host channel list
@@ -104,7 +105,8 @@ class channelManager():
             
         else:
             #token 미존재
-            data["message"] = 'TOKEN IS NOT EXIST'
+            data["state"] = "fail"
+            data["message"] = "Token is not exist"
 
         json.dumps(data, ensure_ascii=False, indent="\t")
 
@@ -130,6 +132,7 @@ class channelManager():
                     channel.description = channel_desc
                     channel.save()
 
+                    data["state"] = "success"
                     channel = Channel.objects.filter(url_id = channel_id)
                     serializer = ChannelIDSerializer(channel, many=True)
                     data["id"] = serializer.data[0]['url_id']
@@ -139,15 +142,18 @@ class channelManager():
 
                 else:
                     #해당 채널이 user의 것이 아님
-                    data["message"] = 'User is not channel\'s host'
+                    data["state"] = "fail"
+                    data["message"] = "User is not channel\'s host"
 
             else:
                 #channel 미존재
-                data["message"] = 'Channel is not exist'
+                data["state"] = "fail"
+                data["message"] = "Channel is not exist"
             
         else:
             #token 미존재
-            data["message"] = 'Token is not exist'
+            data["state"] = "fail"
+            data["message"] = "Token is not exist"
         
         json.dumps(data, ensure_ascii=False, indent = "\t")
 
