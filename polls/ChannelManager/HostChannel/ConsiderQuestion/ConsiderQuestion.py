@@ -58,7 +58,7 @@ class considerQuestion():
         data["questions"] = [0 for i in range(qapairs.count())]
         for i in range(qapairs.count()):
             data["questions"][i] = OrderedDict()
-            serializer = QAPairSerializer(qapair[i], many=True)
+            serializer = QAPairSerializer(qapairs[i], many=True)
             data["questions"][i]["id"] = serializer.data[0]['url_id']
             data["questions"][i]["quiz"] = serializer.data[0]['question']
             data["questions"][i]["answer"] = serializer.data[0]['answer']
