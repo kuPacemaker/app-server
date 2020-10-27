@@ -264,6 +264,7 @@ class channelManager():
 
         data["state"] = "success"
         serializer = ChannelInfoSerializer(channel, many=True)
+        data["channel"] = OrderedDict()
         data["channel"]["id"] = serializer.data[0]['url_id']
         data["channel"]["title"] = serializer.data[0]['name']
         data["channel"]["detail"] = serializer.data[0]['description']
