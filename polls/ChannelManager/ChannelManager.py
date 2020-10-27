@@ -271,12 +271,14 @@ class channelManager():
         data["channel"]["code"] = serializer.data[0]['accesspath']
 
         serializer = UnitSerializer(unit, many=True)
+        data["unit"] = OrderedDict()
         data["unit"]["id"] = serializer.data[0]['url_id']
         data["unit"]["index"] = serializer.data[0]['index']
         data["unit"]["title"] = serializer.data[0]['name']
         data["unit"]["isOpened"] = True
 
         unit_bkd = UnitBKD.objects.filter(unit = unit[0])
+        data["unit"]["document"] = OrderedDict()
         if (unit_bkd):
             bkd = BKD.objects.filter(id = unit_bkd[0].bkd.id)
             serializer = BKDSerializer(bkd, many=True)
@@ -290,6 +292,7 @@ class channelManager():
             data["unit"]["document"]["title"] = None
             data["unit"]["document"]["body"] = None
 
+        data["paper"] = OrderedDict()
         if (UnitQA.objects.filter(unit = unit[0]).exists()):
             qaset = UnitQA.objects.get(unit = unit[0]).qaset
 
