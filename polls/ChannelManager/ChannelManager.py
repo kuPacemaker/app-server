@@ -250,7 +250,7 @@ class channelManager():
             user = User.objects.get(id = user_token[0].user_id)
             hosts = Host.objects.filter(user = user, channel = unit[0].channel)
             guests = Guest.objects.filter(user = user, channel = unit[0].channel)
-            if not (hosts.exists() and guests.exists()):
+            if not (hosts.exists() or guests.exists()):
                 data["state"] = "fail"
                 data["message"] = "User is neither host nor guest of Channel"
 
