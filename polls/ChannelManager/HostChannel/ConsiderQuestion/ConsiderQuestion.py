@@ -55,15 +55,15 @@ class considerQuestion():
         data["isEnd"] = False
         i = 0
         qapairs = QAPair.objects.filter(qaset = qaset)
+        serializer = QAPairSerializer(qapairs, many=True)
         data["questions"] = [0 for i in range(qapairs.count())]
         for i in range(qapairs.count()):
             data["questions"][i] = OrderedDict()
-            serializer = QAPairSerializer(qapairs[i], many=True)
-            data["questions"][i]["id"] = serializer.data[0]['url_id']
-            data["questions"][i]["quiz"] = serializer.data[0]['question']
-            data["questions"][i]["answer"] = serializer.data[0]['answer']
+            data["questions"][i]["id"] = serializer.data[i]['url_id']
+            data["questions"][i]["quiz"] = serializer.data[i]['question']
+            data["questions"][i]["answer"] = serializer.data[i]['answer']
             data["questions"][i]["user_answer"] = ''
-            data["questions"][i]["answer_set"] = serializer.data[0]['answer_set']
+            data["questions"][i]["answer_set"] = serializer.data[i]['answer_set']
             data["questions"][i]["verified"] = True
 
         json.dumps(data, ensure_ascii=False, indent="\t")
