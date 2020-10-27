@@ -33,6 +33,7 @@ class feedManager():
         news = News.objects.filter(id__in = usernews, created_at__gte = limit_date)
         news_length = news.count()
         serizliaer = NewsSerializer(news, many=True)
+        data["board"] = OrderedDict()
         data["board"]["newspeed"] = [0 for i in range(news_length)]
         for i in range(news_length):
             data["board"]["newspeed"][i] = OrderedDict()
