@@ -21,11 +21,11 @@ class testPaperCollector():
         elif not (unit.exists()):
             data["state"] = "fail"
             data["message"] = "Unit is not exist"
-        elif not (TestPlan.objects.filter(unit = unit[0]).exists()):
+        elif not (UnitTest.objects.filter(unit = unit[0]).exists()):
             data["state"] = "fail"
             data["message"] = "TestPlan is not exist"
         else:
-            test = TestPlan.objects.get(unit = unit[0])
+            test = UnitTest.objects.get(unit = unit[0]).test
             user = User.objects.get(id = user_token[0].user_id)
             if not (TestSet.objects.filter(user = user, test = test).exists()):
                 data["state"] = "fail"
