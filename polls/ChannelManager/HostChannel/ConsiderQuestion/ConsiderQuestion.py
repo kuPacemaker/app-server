@@ -39,8 +39,8 @@ class considerQuestion():
 
         unit = Unit.objects.get(url_id = unit_id)
         qaset = UnitQA.objects.get(unit = unit).qaset
-        for pair_id in pair_id_list:
-            qapair = QAPair.objects.get(url_id = pair_id)
+        for i in range(pair_id_length):
+            qapair = QAPair.objects.get(url_id = pair_id_list[i])
             qapair.delete()
 
         i = 1
