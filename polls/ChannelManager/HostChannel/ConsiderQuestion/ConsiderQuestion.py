@@ -83,8 +83,6 @@ class considerQuestion():
 #end_time = request.data['end_time']
         data = OrderedDict()
 
-        print(release_time, end_time)
-
         user_token = Token.objects.filter(key = token)
         unit = Unit.objects.filter(url_id = unit_id)
         if not (user_token.exists()):
