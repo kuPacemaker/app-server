@@ -12,11 +12,10 @@ class considerQuestion():
         token = request.data['token']
         unit_id = request.data['unit_id']
         pair_ids = request.data['pair_ids']
-        print(pair_ids[0]['pair_id'])
         pair_id_length = len(pair_ids)
         pair_id_list = [0 for i in range(pair_id_length)]
         for i in range(pair_id_length):
-            pair_id_list += uuid.UUID(uuid.UUID(pair_ids[i]['pair_id']).hex)
+            pair_id_list[i] = uuid.UUID(uuid.UUID(pair_ids[i]['pair_id']).hex)
         print(pair_id_list)
         data = OrderedDict()
 
