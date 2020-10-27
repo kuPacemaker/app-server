@@ -68,7 +68,7 @@ class testPaperCollector():
         data["state"] = "success"
         data["questions"] = [0 for i in range(test.que_number)]
         testpair = TestPair.objects.filter(tset = testset)
-        serializer = TestPairIDSerailizer(testpair, many=True)
+        serializer = TestPairIDSerializer(testpair, many=True)
         for i in range(test.que_number):
             data["question"][i]["id"] = serializer.data[i]['url_id']
             data["question"][i]["index"] = i+1
