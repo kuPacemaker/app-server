@@ -98,7 +98,7 @@ class accountManager():
             user = User.objects.filter(username=uid)
             if(user):
                 if(user[0].password == pw):
-                    if(user[0].first_name != "")
+                    if(user[0].first_name != ""):
                         user[0].first_name = name
                     user[0].password = pw_new
                     user[0].save()
