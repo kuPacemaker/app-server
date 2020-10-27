@@ -10,13 +10,12 @@ class considerQuestion():
     @api_view(['POST'])
     def verifyQuestion(request):
         token = request.data['token']
-        unit_id = request.data['unit_id']
+        unit_id = uuid.UUID(uuid.UUID(request.data['unit_id']).hex)
         pair_ids = request.data['pair_ids']
         pair_id_length = len(pair_ids)
         pair_id_list = [0 for i in range(pair_id_length)]
         for i in range(pair_id_length):
             pair_id_list[i] = uuid.UUID(uuid.UUID(pair_ids[i]['pair_id']).hex)
-        print(pair_id_list)
         data = OrderedDict()
 
         user_token = Token.objects.filter(key = token)
@@ -73,11 +72,13 @@ class considerQuestion():
     @api_view(['POST'])
     def makeReservation(request):
         token = request.data['token']
-        unit_id = request.data['unit_id']
+        unit_id = uuid.UUID(uuid.UUID(request.data['unit_id']).hex)
         que_number = request.data['que_number']
         release_time = request.data['release_time']
         end_time = request.data['end_time']
         data = OrderedDict()
+
+        print(release_time, end_time)
 
         user_token = Token.objects.filter(key = token)
         unit = Unit.objects.filter(url_id = unit_id)
@@ -97,17 +98,16 @@ class considerQuestion():
             json.dumps(data, ensure_ascii=False, indent="\t")
             return JsonResponse(data, safe=False)
 
-        unit = Unit.objects.get(url_id = unit_id)
-        qaset = UnitQA.objects.get(unit = unit).qaset
+        qaset = UnitQA.objects.get(unit = unit[0]).qaset
         new_testplan = TestPlan.objects.create(qaset = qaset)
         new_testplan.que_number = que_number
         new_testplan.release_time = release_time
         new_testplan.end_time = end_time
         new_testplan.save()
 
-        UnitTest.objects.create(unit = unit, test = new_testplan)
+        UnitTest.objects.create(unit = unit[0], test = new_testplan)
 
-        channel = unit.channel
+        channel = unit[0].channel
         guests = Guest.objects.filter(channel = channel)
         for guest in guests:
             TestSet.objects.create(user = guest, test = new_testplan)
