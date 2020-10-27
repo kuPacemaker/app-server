@@ -3,7 +3,7 @@ from polls.models import *
 from polls.serializers import *
 from collections import OrderedDict
 from rest_framework.decorators import api_view
-import json
+import json, uuid
 import random
 
 class testPaperCollector():
@@ -85,37 +85,48 @@ class testPaperCollector():
         token = request.data['token']
         unit_id = request.data['unit_id']
         pairs = request.data['pairs']
+        pairs_length = len(pairs)
+        pair_id_list = [0 for i in range(pairs_length)]
+        pair_answer_list = [0 for i in range(pairs_length)]
+        for i in range(pairs_length):
+            pair_id_list[i] = uuid.UUID(uuid.UUID(pairs[i]['id']).hex)
+            pair_answer_list[i] = pairs[i]['user_answer']
         data = OrderedDict()
 
         user_token = Token.objects.filter(key = token)
         unit = Unit.objects.filter(url_id = unit_id)
         if not (user_token.exists()):
-            data["message"] = 'Token is not exist'
+            data["state"] = "fail"
+            data["message"] = "Token is not exist"
         elif not (unit.exists()):
-            data["message"] = 'Unit is not exist'
-        elif not (TestPlan.objects.filter(unit = unit[0]).exists()):
-            data["message"] = 'TestPlan is not exist'
+            data["state"] = "fail"
+            data["message"] = "Unit is not exist"
+        elif not (UnitTest.objects.filter(unit = unit[0]).exists()):
+            data["state"] = "fail"
+            data["message"] = "TestPlan is not exist"
         else:
-            test = TestPlan.objects.get(unit = unit[0])
+            test = UnitTest.objects.get(unit = unit[0]).test
             user = User.objects.get(id = user_token[0].user_id)
             if not (TestSet.objects.filter(user = user, test = test).exists()):
-                data["message"] = 'User does not have Test of Unit'
+                data["state"] = "fail"
+                data["message"] = "User does not have Test of Unit"
 
         if bool(data):
             json.dumps(data, ensure_ascii=False, indent="\t")
             return JsonResponse(data, safe=False)
 
         user = User.objects.get(id = Token.objects.get(key = token).user_id)
-        testset = TestSet.objects.get(user = user, test = UnitTest.objects.get(unit = unit).test)
+        testset = TestSet.objects.get(user = user, test = UnitTest.objects.get(unit = unit[0]).test)
         testset.submitted = True
         testset.save()
 
-        for pair in pairs:
-            testpair = TestPair.objects.get(url_id = pair["id"])
-            testpair.user_answer = pair["user_answer"]
+        for i in range(pairs_length):
+            testpair = TestPair.objects.get(url_id = pair_id_list[i])
+            testpair.user_answer = pair_answer_list[i]
             testpair.save()
 
-        data["message"] = 'Paper submitted'
+        data["state"] = "success"
+        data["message"] = "Paper submitted"
 
         json.dumps(data, ensure_ascii=False, indent="\t")
 

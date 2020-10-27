@@ -127,7 +127,9 @@ class TestPair(models.Model):
         unique_together =[['tset', 'pair']]
 
 class News(models.Model):
-    body = models.CharField(max_length=100)
+    ntype = models.CharField(max_length=20)
+    title = models.CharField(max_length=50)
+    body = models.CharField(max_length=200)
     created_at = models.DateTimeField(auto_now_add=True)
     channel = models.ForeignKey(Channel, db_column='ch_id', on_delete=models.CASCADE, null=True)
     unit = models.ForeignKey(Unit, db_column='unit_id', on_delete=models.CASCADE, null=True)
