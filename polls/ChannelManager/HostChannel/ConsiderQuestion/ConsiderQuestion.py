@@ -4,7 +4,7 @@ from polls.serializers import *
 from rest_framework.authtoken.models import Token
 from collections import OrderedDict
 from rest_framework.decorators import api_view
-import json
+import json, uuid
 
 class considerQuestion():
     @api_view(['POST'])
@@ -15,8 +15,8 @@ class considerQuestion():
         pair_id_length = len(pair_ids)
         pair_id_list = [0 for i in range(pair_id_length)]
         for i in range(pair_id_length):
-            pair_id_list += pair_ids[i]['pair_id']
-
+            pair_id_list += uuid.UUID(uuid.UUID(pair_ids[i]['pair_id']).hex)
+        print(pair_id_list)
         data = OrderedDict()
 
         user_token = Token.objects.filter(key = token)
