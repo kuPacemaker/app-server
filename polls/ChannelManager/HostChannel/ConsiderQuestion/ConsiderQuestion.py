@@ -115,12 +115,18 @@ class considerQuestion():
 #new_testplan.end_time = end_time
         new_testplan.save()
 
-        UnitTest.objects.create(unit = unit[0], test = new_testplan)
+        test = UnitTest.objects.create(unit = unit[0], test = new_testplan)
 
         channel = unit[0].channel
         guests = Guest.objects.filter(channel = channel)
         for guest in guests:
-            TestSet.objects.create(user = guest.user, test = new_testplan)
+            testset = TestSet.objects.create(user = guest.user, test = new_testplan)
+            testset.received = True
+            testset.save()
+            for i in range(qapair.count()):
+                TestPair.objects.create(tset = testset, pair = qapair)
+
+        
 
         data["state"] = "success"
         data["message"] = "Reservation saved"

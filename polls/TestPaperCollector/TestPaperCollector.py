@@ -117,7 +117,8 @@ class testPaperCollector():
             return JsonResponse(data, safe=False)
 
         user = User.objects.get(id = Token.objects.get(key = token).user_id)
-        testset = TestSet.objects.get(user = user, test = UnitTest.objects.get(unit = unit[0]).test)
+        test = UnitTest.objects.get(unit = unit[0]).test
+        testset = TestSet.objects.get(user = user, test = test)
         testset.submitted = True
         testset.save()
 
@@ -125,6 +126,13 @@ class testPaperCollector():
             testpair = TestPair.objects.get(url_id = pair_id_list[i])
             testpair.user_answer = pair_answer_list[i]
             testpair.save()
+
+        testset = Testset.objects.filter(test = test)
+        for i in range(testset.count()):
+            if(testset[i].submitted == False):
+                break
+            if(i == testset.count()-1):
+                test.ended = True
 
         data["state"] = "success"
         data["message"] = "Paper submitted"
