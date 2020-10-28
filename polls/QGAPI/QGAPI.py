@@ -48,6 +48,7 @@ class qgapi():
         token = request.data['token']
         unit_id = uuid.UUID(uuid.UUID(request.data['unit_id']).hex)
         user_token = Token.objects.filter(key = token)
+        data = OrderedDict()
         if(user_token):
             #token 존재
             unit = Unit.objects.filter(url_id = unit_id)
@@ -80,7 +81,6 @@ class qgapi():
                     serializer = QAPairSerializer(qa_pair, many=True)
 
                     #여기서부터 json 형식의 파일을 만들기 위한 작업을 한다.
-                    data = OrderedDict()
                     data["isStart"] = None
                     data["isEnd"] = None
                     data["questions"] = [0 for i in range(length)]
