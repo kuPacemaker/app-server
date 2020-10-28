@@ -42,6 +42,7 @@ class feedManager():
             data["board"]["newsfeed"][i]["body"] = serializer.data[i]['body']
             news_channel = Channel.objects.filter(id = news[i].channel.id)
             cid_serializer = ChannelIDSerializer(news_channel, many=True)
+            data["board"]["newsfeed"][i]["arg"] = OrderedDict()
             data["board"]["newsfeed"][i]["arg"]["channel_id"] = cid_serializer.data[0]['url_id']
             news_unit = Unit.objects.filter(id = news[i].unit.id)
             uid_serializer = UnitIDSerializer(news_unit, many=True)
