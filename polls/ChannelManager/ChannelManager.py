@@ -362,7 +362,7 @@ class channelManager():
         else:
             data["paper"]["isStart"] = False
             data["paper"]["isEnd"] = False
-            data["paper"]["questions"] = None
+            data["paper"]["questions"] = []
 
         json.dumps(data, ensure_ascii=False, indent="\t")
 
