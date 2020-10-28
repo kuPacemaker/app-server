@@ -55,6 +55,7 @@ class channelManager():
         token = request.data['token']
         channel_name = request.data['channel_name']
         channel_desc = request.data['channel_desc']
+        image = request.data['image']
         user_token = Token.objects.filter(key = token)
         data = OrderedDict()
         if(user_token):
@@ -79,7 +80,7 @@ class channelManager():
                 data["leader"][i]["detail"] = host_channel_list[i].description
                 data["leader"][i]["image"] = None
                
-            new_channel = Channel.objects.create(name=channel_name, description=channel_desc, accesspath=channel_join_code)
+            new_channel = Channel.objects.create(name=channel_name, description=channel_desc, accesspath=channel_join_code, image_type = image)
             Host.objects.create(channel = new_channel, user = user)
             Guest.objects.create(channel = new_channel, user = user)
             channel = Channel.objects.filter(id=new_channel.id)
