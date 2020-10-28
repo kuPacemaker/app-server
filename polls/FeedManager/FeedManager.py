@@ -32,7 +32,7 @@ class feedManager():
         limit_date = date.today() - datetime.timedelta(days=30)
         news = News.objects.filter(id__in = usernews, created_at__gte = limit_date)
         news_length = news.count()
-        serizliaer = NewsSerializer(news, many=True)
+        serializer = NewsSerializer(news, many=True)
         data["board"] = OrderedDict()
         data["board"]["newsfeed"] = [0 for i in range(news_length)]
         for i in range(news_length):
