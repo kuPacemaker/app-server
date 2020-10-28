@@ -135,6 +135,16 @@ class testPaperCollector():
             if(i == testset.count()-1):
                 test.ended = True
                 test.save()
+                    
+                unit_for_news = Unit.objects.get(url_id = unit_id)
+                channel_for_news = unit_for_news.channel
+                news_title = "Submit all papers"
+                news_body = channel_for_news.name+"\'s all runners are finish submitted paper."
+                news = News.objects.create(title = news_title, body = news_body, channel = channel_for_news, unit = unit_for_news)
+                hosts = Host.objects.filter(channel = channel_for_news)
+                for host in hosts:
+                    UserNews.objects.create(news = news, user = host.user)
+
 
         data["state"] = "success"
         data["message"] = "Paper submitted"
