@@ -78,7 +78,7 @@ class channelManager():
                 data["leader"][i]["id"] = serializer.data[0]['url_id']
                 data["leader"][i]["title"] = host_channel_list[i].name
                 data["leader"][i]["detail"] = host_channel_list[i].description
-                data["leader"][i]["image"] = None
+                data["leader"][i]["image"] = host_channel_list[i].image_type
                
             new_channel = Channel.objects.create(name=channel_name, description=channel_desc, accesspath=channel_join_code, image_type = image)
             Host.objects.create(channel = new_channel, user = user)
@@ -90,22 +90,26 @@ class channelManager():
             data["leader"][host_length]["id"] = serializer.data[0]['url_id']
             data["leader"][host_length]["title"] = serializer.data[0]['name']
             data["leader"][host_length]["detail"] = serializer.data[0]['description']
-            data["leader"][host_length]["image"] = None
+            data["leader"][host_length]["image"] = serializer.data[0]['image_type']
 
-            if(guest_length != 0):
-                data["runner"] = [0 for i in range(guest_length)]
-                for i in range(guest_length):
-                    guest_channel = Channel.objects.filter(id=guest_channel_list[i].id)
-                    serializer = ChannelIDSerializer(guest_channel,many=True)
-                    #UUID가 serializerable하도록 해주기 위해 url_id만 별도의 serailizer 사용
-                    data["runner"][i] = OrderedDict()
-                    data["runner"][i]["id"] = serializer.data[0]['url_id']
-                    data["runner"][i]["title"] = guest_channel_list[i].name
-                    data["runner"][i]["detail"] = guest_channel_list[i].description
-                    data["runner"][i]["image"] = None
-            else:
-                data["runner"] = []
+            data["runner"] = [0 for i in range(guest_length+1)]
+            for i in range(guest_length):
+                guest_channel = Channel.objects.filter(id=guest_channel_list[i].id)
+                serializer = ChannelIDSerializer(guest_channel,many=True)
+                #UUID가 serializerable하도록 해주기 위해 url_id만 별도의 serailizer 사용
+                data["runner"][i] = OrderedDict()
+                data["runner"][i]["id"] = serializer.data[0]['url_id']
+                data["runner"][i]["title"] = guest_channel_list[i].name
+                data["runner"][i]["detail"] = guest_channel_list[i].description
+                data["runner"][i]["image"] = guest_channel_list[i].image_type
             
+            #새로 생성한 guest channel list
+            data["runner"][guest_length] = OrderedDict()
+            data["runner"][guest_length]["id"] = serializer.data[0]['url_id']
+            data["runner"][guest_length]["title"] = serializer.data[0]['name']
+            data["runner"][guest_length]["detail"] = serializer.data[0]['description']
+            data["runner"][guest_length]["image"] = serializer.data[0]['image_type']
+
         else:
             #token 미존재
             data["state"] = "fail"
