@@ -225,6 +225,7 @@ class channelManager():
                 data["title"] = channel[0].name
                 data["detail"] = channel[0].description
                 data["image"] = channel[0].image_type
+                data["leader_name"] = Host.objects.get(channel = channel[0]).user.first_name
 
                 guest = Guest.objects.filter(channel = channel[0])
                 guest_length = len(guest)
