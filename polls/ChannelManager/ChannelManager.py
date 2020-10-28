@@ -236,7 +236,7 @@ class channelManager():
                         data["runners"][i] = guest[i].user.first_name
                 else:
                      data["runners"] = []
-                unit = Unit.objects.filter(channel = channel[0])
+                unit = Unit.objects.filter(channel = channel[0]).order_by('index')
                 unit_serializer = UnitSerializer(unit, many=True)
                 data["units"] = [0 for i in range(unit.count())]
                 for i in range(unit.count()):

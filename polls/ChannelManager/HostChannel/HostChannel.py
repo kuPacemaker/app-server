@@ -52,8 +52,19 @@ class hostChannel():
                     data["units"][i]["state"] = OrderedDict()
                     data["units"][i]["state"]["hasDocument"] = UnitBKD.objects.filter(unit = unit_list[i]).exists()
                     data["units"][i]["state"]["hasPaper"] = UnitQA.objects.filter(unit = unit_list[i]).exists()
-                    data["units"][i]["state"]["startQuiz"] = False
-                    data["units"][i]["state"]["endQuiz"] = False
+                    test = UnitTest.objects.filter(unit = unit_list[i])
+                    if(test.exists()):
+                        startQuiz = test[0].test.released
+                        testset = Testset.objects.filter(user = user[0], test = test[0].test)
+                        if(testset.exists()):
+                            endQuiz = testset[0].submitted
+                        else:
+                            endQuiz = False
+                    else:
+                         startQuiz = False
+                         endQuiz = False
+                    data["units"][i]["state"]["startQuiz"] = startQuiz
+                    data["units"][i]["state"]["endQuiz"] = endQuiz
 
                 guest = Guest.objects.filter(channel = channel[0])
                 guest_length = len(guest)
@@ -100,6 +111,15 @@ class hostChannel():
                     unit.save()
 
                     data["state"] = "success"
+                    channel = Channel.objects.filter(id = unit.channel.id)
+                    channel_serializer = ChannelInfoSerializer(channel, many=True)
+                    data["id"] = channel_serializer.data[0]['url_id']
+                    data["title"] = channel_serializer.data[0]['name']
+                    data["detail"] = channel_serializer.data[0]['description']
+                    data["code"] = channel_serializer.data[0]['accesspath']
+                    data["image"] = channel_serializer.data[0]['image_type']
+
+
                     unit = Unit.objects.filter(url_id = unit_id)
                     serializer = UnitSerializer(unit, many=True)
                     data["id"] = serializer.data[0]['url_id']

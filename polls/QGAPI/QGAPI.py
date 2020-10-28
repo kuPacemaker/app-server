@@ -57,6 +57,12 @@ class qgapi():
                 host = Host.objects.filter(channel = unit[0].channel)
                 if(user_token[0].user_id == host[0].user.id):
                     #token에 해당하는 user가 unit이 존재하는 channel의 host이면
+                    unitqa = UnitQA.objects.filter(unit = unit[0])
+                    if(unitqa.exists()):
+                        unitqa[0].qaset.delete()
+
+
+
                     unit_bkd = UnitBKD.objects.get(unit = unit[0])
                     bkd = BKD.objects.get(id = unit_bkd.bkd.id)
         
