@@ -4,6 +4,7 @@ from polls.serializers import *
 from rest_framework.authtoken.models import Token
 from collections import OrderedDict
 from rest_framework.decorators import api_view
+from polls.QGAPI.QGAPI import qgapi
 import json, uuid
 
 class considerQuestion():
@@ -67,7 +68,7 @@ class considerQuestion():
             data["questions"][i]["quiz"] = serializer.data[i]['question']
             data["questions"][i]["answer"] = serializer.data[i]['answer']
             data["questions"][i]["user_answer"] = ''
-            data["questions"][i]["answer_set"] = serializer.data[i]['answer_set']
+            data["questions"][i]["answer_set"] = qgapi.stringWithSlash(qapairs[i].answer_set)
             data["questions"][i]["verified"] = True
 
         json.dumps(data, ensure_ascii=False, indent="\t")

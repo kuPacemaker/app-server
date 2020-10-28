@@ -313,7 +313,7 @@ class channelManager():
             for i in range(qapair_length):
                 data["paper"]["questions"][i] = OrderedDict()
                 data["paper"]["questions"][i]["id"] = serializer.data[i]['url_id']
-                data["paper"]["questions"][i]["quiz"] = qapairs[i].question
+                data["paper"]["questions"][i]["question"] = qapairs[i].question
                 data["paper"]["questions"][i]["answer"] = qapairs[i].answer
                 data["paper"]["questions"][i]["user_answer"] = ''
                 data["paper"]["questions"][i]["answer_set"] = qgapi.stringWithSlash(qapairs[i].answer_set)

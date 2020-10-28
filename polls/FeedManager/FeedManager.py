@@ -34,18 +34,18 @@ class feedManager():
         news_length = news.count()
         serizliaer = NewsSerializer(news, many=True)
         data["board"] = OrderedDict()
-        data["board"]["newspeed"] = [0 for i in range(news_length)]
+        data["board"]["newsfeed"] = [0 for i in range(news_length)]
         for i in range(news_length):
-            data["board"]["newspeed"][i] = OrderedDict()
-            data["board"]["newspeed"][i]["type"] = serializer.data[i]['ntype']
-            data["board"]["newspeed"][i]["title"] = serializer.data[i]['title']
-            data["board"]["newspeed"][i]["body"] = serializer.data[i]['body']
+            data["board"]["newsfeed"][i] = OrderedDict()
+            data["board"]["newsfeed"][i]["type"] = serializer.data[i]['ntype']
+            data["board"]["newsfeed"][i]["title"] = serializer.data[i]['title']
+            data["board"]["newsfeed"][i]["body"] = serializer.data[i]['body']
             news_channel = Channel.objects.filter(id = news[i].channel.id)
             cid_serializer = ChannelIDSerializer(news_channel, many=True)
-            data["board"]["newspeed"][i]["arg"]["channelId"] = cid_serializer.data[0]['url_id']
+            data["board"]["newsfeed"][i]["arg"]["channel_id"] = cid_serializer.data[0]['url_id']
             news_unit = Unit.objects.filter(id = news[i].unit.id)
             uid_serializer = UnitIDSerializer(news_unit, many=True)
-            data["board"]["newspeed"][i]["arg"]["unitId"] = uid_serializer.data[0]['url_id']
+            data["board"]["newsfeed"][i]["arg"]["unit_id"] = uid_serializer.data[0]['url_id']
 
         hosts = Host.objects.filter(user = user)
         host_channel = Channel.objects.filter(id__in = hosts.values_list('channel', flat=True))
