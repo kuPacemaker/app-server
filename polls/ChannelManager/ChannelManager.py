@@ -81,6 +81,7 @@ class channelManager():
                
             new_channel = Channel.objects.create(name=channel_name, description=channel_desc, accesspath=channel_join_code)
             Host.objects.create(channel = new_channel, user = user)
+            Guest.objects.create(channel = new_channel, user = user)
             channel = Channel.objects.filter(id=new_channel.id)
             serializer = ChannelInfoSerializer(channel,many=True)
             #새로 생성한 host channel list
