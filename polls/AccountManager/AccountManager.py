@@ -46,7 +46,7 @@ class accountManager():
         uid = request.data['id']
         name = request.data['name']
         pw = request.data['pw']
-        user = User.objects.filter(username = id)
+        user = User.objects.filter(username = uid)
         data = OrderedDict()
         if(user):
             #DB에 uid가 이미 존재함
