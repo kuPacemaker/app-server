@@ -224,8 +224,9 @@ class channelManager():
                 data["id"] = serializer.data[0]['url_id']
                 data["title"] = channel[0].name
                 data["detail"] = channel[0].description
+                data["code"] = channel[0].accesspath
                 data["image"] = channel[0].image_type
-                data["leader_name"] = Host.objects.get(channel = channel[0]).user.first_name
+                data["leader"] = Host.objects.get(channel = channel[0]).user.first_name
 
                 guest = Guest.objects.filter(channel = channel[0])
                 guest_length = len(guest)
@@ -326,9 +327,9 @@ class channelManager():
             data["unit"]["document"]["body"] = bkd[0].body
         else:
             data["unit"]["document"]["id"] = None
-            data["unit"]["document"]["visible"] = None
-            data["unit"]["document"]["title"] = None
-            data["unit"]["document"]["body"] = None
+            data["unit"]["document"]["visible"] = False
+            data["unit"]["document"]["title"] = ""
+            data["unit"]["document"]["body"] = ""
 
         data["paper"] = OrderedDict()
         if (UnitQA.objects.filter(unit = unit[0]).exists()):
@@ -345,15 +346,18 @@ class channelManager():
             qapairs = QAPair.objects.filter(qaset = qaset)
             qapair_length = qapairs.count()
             serializer = QAPairSerializer(qapairs, many=True)
-            data["paper"]["questions"] = [0 for i in range(qapair_length)]
-            for i in range(qapair_length):
-                data["paper"]["questions"][i] = OrderedDict()
-                data["paper"]["questions"][i]["id"] = serializer.data[i]['url_id']
-                data["paper"]["questions"][i]["question"] = qapairs[i].question
-                data["paper"]["questions"][i]["answer"] = qapairs[i].answer
-                data["paper"]["questions"][i]["user_answer"] = ''
-                data["paper"]["questions"][i]["answer_set"] = qgapi.stringWithSlash(qapairs[i].answer_set)
-                data["paper"]["questions"][i]["verified"] = True
+            if(qapair_length != 0):
+                data["paper"]["questions"] = [0 for i in range(qapair_length)]
+                for i in range(qapair_length):
+                    data["paper"]["questions"][i] = OrderedDict()
+                    data["paper"]["questions"][i]["id"] = serializer.data[i]['url_id']
+                    data["paper"]["questions"][i]["question"] = qapairs[i].question
+                    data["paper"]["questions"][i]["answer"] = qapairs[i].answer
+                    data["paper"]["questions"][i]["user_answer"] = ''
+                    data["paper"]["questions"][i]["answer_set"] = qgapi.stringWithSlash(qapairs[i].answer_set)
+                    data["paper"]["questions"][i]["verified"] = True
+            else:
+                 data["paper"]["questions"] = []
 
         else:
             data["paper"]["isStart"] = False
