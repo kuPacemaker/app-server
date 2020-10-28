@@ -26,7 +26,7 @@ class accountManager():
                 data["state"] = "success"
                 data["id"] = user.username
                 data["name"] = user.first_name
-                data["type"] = "normal"
+                data["type"] = "Standard"
                 data["token"] = serializer.data[0]['key']
             else:
                 #password와 upw가 일치하지 않음
