@@ -61,8 +61,8 @@ class qgapi():
                     bkd = BKD.objects.get(id = unit_bkd.bkd.id)
         
                     URL = 'https://117.16.136.170/restful/qg/'
-                    data = {'bkd' : bkd.body}
-                    res = requests.request('POST', URL, json=data, verify=False)
+                    datas = {'bkd' : bkd.body}
+                    res = requests.request('POST', URL, json=datas, verify=False)
                     content = res.text
                     nouns = []
                     aqset = []
