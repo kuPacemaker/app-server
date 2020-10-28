@@ -128,7 +128,7 @@ class testPaperCollector():
             testpair.user_answer = pair_answer_list[i]
             testpair.save()
 
-        testset = Testset.objects.filter(test = test)
+        testset = TestSet.objects.filter(test = test)
         for i in range(testset.count()):
             if(testset[i].submitted == False):
                 break
