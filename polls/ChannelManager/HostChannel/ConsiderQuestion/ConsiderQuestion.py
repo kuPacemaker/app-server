@@ -124,7 +124,7 @@ class considerQuestion():
             testset.received = True
             testset.save()
             for i in range(qapair.count()):
-                TestPair.objects.create(tset = testset, pair = qapair)
+                TestPair.objects.create(tset = testset, pair = qapair[i])
 
         
 
