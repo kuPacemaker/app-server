@@ -124,7 +124,7 @@ class testPaperCollector():
 
         for i in range(pairs_length):
             qapair = QAPair.objects.get(url_id = pair_id_list[i])
-            testpair = TestPair.objects.get(pair = qapair)
+            testpair = TestPair.objects.get(pair = qapair,tset = testset)
             testpair.user_answer = pair_answer_list[i]
             testpair.save()
 
