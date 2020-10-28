@@ -48,6 +48,7 @@ class Channel(models.Model):
     name = models.CharField(max_length=20)
     description = models.CharField(max_length=100, blank=True)
     accesspath = models.CharField(max_length=20, unique=True, null=True)
+    image_type = models.IntegerField(default = 0)
     
 class Unit(models.Model):
     url_id = models.UUIDField(unique=True, default=uuid.uuid4, editable=False)
