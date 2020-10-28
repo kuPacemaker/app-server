@@ -79,7 +79,6 @@ class considerQuestion():
     def makeReservation(request):
         token = request.data['token']
         unit_id = uuid.UUID(uuid.UUID(request.data['unit_id']).hex)
-        que_number = request.data['que_number']
 #release_time = request.data['release_time']
 #end_time = request.data['end_time']
         data = OrderedDict()
@@ -107,8 +106,9 @@ class considerQuestion():
             return JsonResponse(data, safe=False)
 
         qaset = UnitQA.objects.get(unit = unit[0]).qaset
+        qapair = QAPair.objects.filter(qaset = qaset)
         new_testplan = TestPlan.objects.create(qaset = qaset)
-        new_testplan.que_number = que_number
+        new_testplan.que_number = qapair.count()
         new_testplan.released = True
 #배포시간과 마감시간 설정부분
 #new_testplan.release_time = release_time

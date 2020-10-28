@@ -180,7 +180,10 @@ class hostChannel():
                     unit = Unit.objects.get(url_id = unit_id)
                     unit.delete()
                     data["state"] = "success"
-                    data["message"] = "Unit is deleted."
+                    channel = Channel.objects.filter(id = unit.channel.id)
+                    channel_serializer = ChannelInfoSerializer(channel, many=True)
+                    data["id"] = channel_serializer.data[0]['url_id']
+                    data["title"] = channel_serializer.data[0]['name']
 
                 else:
                     data["state"] = "fail"

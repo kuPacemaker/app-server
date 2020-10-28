@@ -85,13 +85,13 @@ class channelManager():
             Host.objects.create(channel = new_channel, user = user)
             Guest.objects.create(channel = new_channel, user = user)
             channel = Channel.objects.filter(id=new_channel.id)
-            serializer = ChannelInfoSerializer(channel,many=True)
+            new_channel_serializer = ChannelInfoSerializer(channel,many=True)
             #새로 생성한 host channel list
             data["leader"][host_length] = OrderedDict()
-            data["leader"][host_length]["id"] = serializer.data[0]['url_id']
-            data["leader"][host_length]["title"] = serializer.data[0]['name']
-            data["leader"][host_length]["detail"] = serializer.data[0]['description']
-            data["leader"][host_length]["image"] = serializer.data[0]['image_type']
+            data["leader"][host_length]["id"] = new_channel_serializer.data[0]['url_id']
+            data["leader"][host_length]["title"] = new_channel_serializer.data[0]['name']
+            data["leader"][host_length]["detail"] = new_channel_serializer.data[0]['description']
+            data["leader"][host_length]["image"] = new_channel_serializer.data[0]['image_type']
             data["leader"][host_length]["leader_name"] = user.first_name
 
             data["runner"] = [0 for i in range(guest_length+1)]
@@ -108,10 +108,10 @@ class channelManager():
             
             #새로 생성한 guest channel list
             data["runner"][guest_length] = OrderedDict()
-            data["runner"][guest_length]["id"] = serializer.data[0]['url_id']
-            data["runner"][guest_length]["title"] = serializer.data[0]['name']
-            data["runner"][guest_length]["detail"] = serializer.data[0]['description']
-            data["runner"][guest_length]["image"] = serializer.data[0]['image_type']
+            data["runner"][guest_length]["id"] = new_channel_serializer.data[0]['url_id']
+            data["runner"][guest_length]["title"] = new_channel_serializer.data[0]['name']
+            data["runner"][guest_length]["detail"] = new_channel_serializer.data[0]['description']
+            data["runner"][guest_length]["image"] = new_channel_serializer.data[0]['image_type']
             data["runner"][guest_length]["leader_name"] = user.first_name
 
         else:
