@@ -229,6 +229,19 @@ class channelManager():
                         data["runners"][i] = guest[i].user.first_name
                 else:
                      data["runners"] = []
+                unit = Unit.objects.filter(channel = channel[0])
+                unit_serializer = UnitSerializer(unit, many=True)
+                data["units"] = [0 for i in range(unit.count())]
+                for i in range(unit.count()):
+                    data["units"][i] = OrderedDict()
+                    data["units"][i]["id"] = unit_serializer.data[i]['url_id']
+                    data["units"][i]["index"] = unit_serializer.data[i]['index']
+                    data["units"][i]["title"] = unit_serializer.data[i][['name']
+                    data["units"][i]["state"] = OrderedDict()
+                    data["units"][i]["state"]["hasDocument"] = UnitBKD.objects.filter(unit = unit[i]).exists()
+                    data["units"][i]["state"]["hasPaper"] = UnitQA.objects.filter(unit = unit[i]).exists()
+                    data["units"][i]["state"]["startQuiz"] = False
+                    data["units"][i]["state"]["endQuiz"] = False
             else:
                  data["state"] = "fail"
                  data["message"] = "Channel is not exist"
