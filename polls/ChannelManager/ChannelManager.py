@@ -248,7 +248,7 @@ class channelManager():
                     test = UnitTest.objects.filter(unit = unit[i])
                     if(test.exists()):
                         startQuiz = test[0].test.released
-                        testset = TestSet.objects.filter(user = user, test = test[0])
+                        testset = TestSet.objects.filter(user = user, test = test[0].test)
                         if(testset.exists()):
                             endQuiz = testset[0].submitted
                         else:
