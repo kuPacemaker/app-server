@@ -15,7 +15,7 @@ class IndexView(generic.ListView):
     template_name = 'polls/index.html'
 
     def get_queryset(self):
-        return User-objects.filter(id=1)
+        return User.objects.filter(id=1)
 
 def zero_ssl(request, filename):
     fsock = open(filename, "rb")
