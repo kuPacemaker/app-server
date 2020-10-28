@@ -109,6 +109,7 @@ class considerQuestion():
         qaset = UnitQA.objects.get(unit = unit[0]).qaset
         new_testplan = TestPlan.objects.create(qaset = qaset)
         new_testplan.que_number = que_number
+        new_testplan.released = True
 #배포시간과 마감시간 설정부분
 #new_testplan.release_time = release_time
 #new_testplan.end_time = end_time

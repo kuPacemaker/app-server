@@ -50,8 +50,8 @@ class hostChannel():
                     data["units"][i]["title"] = unit_serializer.data[i]['name']
 
                     data["units"][i]["state"] = OrderedDict()
-                    data["units"][i]["state"]["hasDocument"] = False
-                    data["units"][i]["state"]["hasPaper"] = False
+                    data["units"][i]["state"]["hasDocument"] = UnitBKD.objects.filter(unit = unit_list[i]).exists()
+                    data["units"][i]["state"]["hasPaper"] = UnitQA.objects.filter(unit = unit_list[i]).exists()
                     data["units"][i]["state"]["startQuiz"] = False
                     data["units"][i]["state"]["endQuiz"] = False
 

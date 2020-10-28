@@ -79,6 +79,7 @@ class channelManager():
                 data["leader"][i]["title"] = host_channel_list[i].name
                 data["leader"][i]["detail"] = host_channel_list[i].description
                 data["leader"][i]["image"] = host_channel_list[i].image_type
+                data["leader"][i]["leader_name"] = Host.objects.get(channel = host_channel_list[i]).user.first_name
                
             new_channel = Channel.objects.create(name=channel_name, description=channel_desc, accesspath=channel_join_code, image_type = image)
             Host.objects.create(channel = new_channel, user = user)
@@ -91,6 +92,7 @@ class channelManager():
             data["leader"][host_length]["title"] = serializer.data[0]['name']
             data["leader"][host_length]["detail"] = serializer.data[0]['description']
             data["leader"][host_length]["image"] = serializer.data[0]['image_type']
+            data["leader"][host_length]["leader_name"] = user.first_name
 
             data["runner"] = [0 for i in range(guest_length+1)]
             for i in range(guest_length):
@@ -102,6 +104,7 @@ class channelManager():
                 data["runner"][i]["title"] = guest_channel_list[i].name
                 data["runner"][i]["detail"] = guest_channel_list[i].description
                 data["runner"][i]["image"] = guest_channel_list[i].image_type
+                data["runner"][i]["leader_name"] = Host.objects.get(channel = guest_channel_list[i]).user.first_name
             
             #새로 생성한 guest channel list
             data["runner"][guest_length] = OrderedDict()
@@ -109,6 +112,7 @@ class channelManager():
             data["runner"][guest_length]["title"] = serializer.data[0]['name']
             data["runner"][guest_length]["detail"] = serializer.data[0]['description']
             data["runner"][guest_length]["image"] = serializer.data[0]['image_type']
+            data["runner"][guest_length]["leader_name"] = user.first_name
 
         else:
             #token 미존재
@@ -211,6 +215,7 @@ class channelManager():
         data = OrderedDict()
         if(user_token):
             #token 존재
+            user = User.objects.get(id = user_token.user_id)
             channel = Channel.objects.filter(url_id = channel_id)
             if(channel):
                 #channel 존재
@@ -240,8 +245,19 @@ class channelManager():
                     data["units"][i]["state"] = OrderedDict()
                     data["units"][i]["state"]["hasDocument"] = UnitBKD.objects.filter(unit = unit[i]).exists()
                     data["units"][i]["state"]["hasPaper"] = UnitQA.objects.filter(unit = unit[i]).exists()
-                    data["units"][i]["state"]["startQuiz"] = False
-                    data["units"][i]["state"]["endQuiz"] = False
+                    test = UnitTest.objects.filter(unit = unit[i])
+                    if(test.exists()):
+                        startQuiz = test[0].test.released
+                        testset = TestSet.objects.filter(user = user, test = test[0])
+                        if(testset.exists()):
+                            endQuiz = testset[0].submitted
+                        else:
+                            endQuiz = False
+                    else:
+                         startQuiz = False
+                         endQuiz = False
+                    data["units"][i]["state"]["startQuiz"] = startQuiz
+                    data["units"][i]["state"]["endQuiz"] = endQuiz
             else:
                  data["state"] = "fail"
                  data["message"] = "Channel is not exist"
