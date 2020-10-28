@@ -215,7 +215,7 @@ class channelManager():
         data = OrderedDict()
         if(user_token):
             #token 존재
-            user = User.objects.get(id = user_token.user_id)
+            user = User.objects.get(id = user_token[0].user_id)
             channel = Channel.objects.filter(url_id = channel_id)
             if(channel):
                 #channel 존재
