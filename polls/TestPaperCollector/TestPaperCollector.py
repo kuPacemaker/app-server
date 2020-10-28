@@ -131,9 +131,11 @@ class testPaperCollector():
         testset = TestSet.objects.filter(test = test)
         for i in range(testset.count()):
             if(testset[i].submitted == False):
+                print("false")
                 break
             if(i == testset.count()-1):
-                test.test.ended = True
+                print("true")
+                test.ended = True
 
         data["state"] = "success"
         data["message"] = "Paper submitted"
