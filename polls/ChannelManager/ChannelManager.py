@@ -147,7 +147,7 @@ class channelManager():
                     data["id"] = serializer.data[0]['url_id']
                     data["title"] = channel[0].name
                     data["detail"] = channel[0].description
-                    data["image"] = None
+                    data["image"] = channel[0].image_type
 
                 else:
                     #해당 채널이 user의 것이 아님
@@ -219,7 +219,7 @@ class channelManager():
                 data["id"] = serializer.data[0]['url_id']
                 data["title"] = channel[0].name
                 data["detail"] = channel[0].description
-                data["image"] = None
+                data["image"] = channel[0].image_type
 
                 guest = Guest.objects.filter(channel = channel[0])
                 guest_length = len(guest)
@@ -362,7 +362,7 @@ class channelManager():
             data["leader"][i]["id"] = serializer.data[i]['url_id']
             data["leader"][i]["title"] = serializer.data[i]['name']
             data["leader"][i]["detail"] = serializer.data[i]['description']
-            data["leader"][i]["image"] = None
+            data["leader"][i]["image"] = serializer.data[i]['image_type']
 
         guests = Guest.objects.filter(user = user)
         guest_channel = Channel.objects.filter(id__in = guests.values_list('channel', flat=True))
@@ -374,7 +374,7 @@ class channelManager():
             data["runner"][i]["id"] = serializer.data[i]['url_id']
             data["runner"][i]["title"] = serializer.data[i]['name']
             data["runner"][i]["detail"] = serializer.data[i]['description']
-            data["runner"][i]["image"] = None
+            data["runner"][i]["image"] = serializer.data[i]['image_type']
 
         json.dumps(data, ensure_ascii=False, indent="\t")
 

@@ -43,7 +43,7 @@ class guestChannel():
                             data["leader"][i]["id"] = serializer.data[0]['url_id']
                             data["leader"][i]["title"] = host_channel_list[i].name
                             data["leader"][i]["detail"] = host_channel_list[i].description
-                            data["leader"][i]["image"] = None
+                            data["leader"][i]["image"] = host_channel_list[i].image_type
                     else:
                         data["leader"] = []
 
@@ -56,7 +56,7 @@ class guestChannel():
                         data["runner"][i]["id"] = serializer.data[0]['url_id']
                         data["runner"][i]["title"] = guest_channel_list[i].name
                         data["runner"][i]["detail"] = guest_channel_list[i].description
-                        data["runner"][i]["image"] = None
+                        data["runner"][i]["image"] = guest_channel_list[i].image_type
 		        
                     #이 아래부분은 새로 입장하는 채널을 추가하는 부분인데
                     #이미 입장해있는 채널인지 여부를 확인해주는 부분이
@@ -66,7 +66,7 @@ class guestChannel():
                     data["runner"][guest_length]["id"] = serializer.data[0]['url_id']
                     data["runner"][guest_length]["title"] = serializer.data[0]['name']
                     data["runner"][guest_length]["detail"] = serializer.data[0]['description']
-                    data["runner"][guest_length]["image"] = None
+                    data["runner"][guest_length]["image"] = serializer.data[0]['image_type']
 
                     channel = Channel.objects.get(accesspath = accesscode)
                     Guest.objects.create(user=user,channel=channel)

@@ -57,7 +57,7 @@ class feedManager():
             data["board"]["leader"][i]["id"] = serializer.data[i]['url_id']
             data["board"]["leader"][i]["title"] = serializer.data[i]['name']
             data["board"]["leader"][i]["detail"] = serializer.data[i]['description']
-            data["board"]["leader"][i]["image"] = None
+            data["board"]["leader"][i]["image"] = serializer.data[i]['image_type']
 
         guests = Guest.objects.filter(user = user)
         guest_channel = Channel.objects.filter(id__in = guests.values_list('channel', flat=True))
@@ -69,7 +69,7 @@ class feedManager():
             data["board"]["runner"][i]["id"] = serializer.data[i]['url_id']
             data["board"]["runner"][i]["title"] = serializer.data[i]['name']
             data["board"]["runner"][i]["detail"] = serializer.data[i]['description']
-            data["board"]["runner"][i]["image"] = None
+            data["board"]["runner"][i]["image"] = serializer.data[i]['image_type']
 
         json.dumps(data, ensure_ascii=False, indent="\t")
 

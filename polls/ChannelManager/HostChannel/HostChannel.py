@@ -41,7 +41,7 @@ class hostChannel():
                 data["detail"] = channel_serializer.data[0]['description']
                 data["leader"] = user[0].first_name
                 data["code"] = channel_serializer.data[0]['accesspath']
-                data["image"] = None
+                data["image"] = channel_serializer.data[0]['image_type']
                 data["units"] = [0 for i in range(unit_length)]
                 for i in range(unit_length):
                     data["units"][i] = OrderedDict()
