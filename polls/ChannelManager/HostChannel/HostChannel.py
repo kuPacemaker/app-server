@@ -118,13 +118,39 @@ class hostChannel():
                     data["detail"] = channel_serializer.data[0]['description']
                     data["code"] = channel_serializer.data[0]['accesspath']
                     data["image"] = channel_serializer.data[0]['image_type']
+                    data["leader"] = Host.objects.get(channel = channel[0]).user.first_name
 
+                    unit = Unit.objects.filter(url_id = unit_id).order_by('index')
+                    unit_serializer = UnitSerializer(unit, many=True)
+                    data["units"] = [0 for i in range(unit.count())]
+                    for i in range(unit.count())):
+                        data["units"][i] = OrderedDict()
+                        data["units"][i]["id"] = unit_serializer.data[i]['url_id']
+                        data["units"][i]["index"] = unit_serializer.data[i]['index']
+                        data["units"][i]["title"] = unit_serializer.data[i]['name']
+                        data["units"][i]["state"] = OrderedDict()
+                        data["units"][i]["state"]["hasDocument"] = UnitBKD.objects.filter(unit = unit[i]).exists()
+                        data["units"][i]["state"]["hasPaper"] = UnitQA.objects.filter(unit = unit[i]).exists()
+                        test = UnitTest.objects.filter(unit = unit[i])
+                        if(test.exists()):
+                            startQuiz = test[0].test.released
+                            testset = TestSet.objects.filter(user = host[0].user, test = test[0].test)
+                            if(testset.exists()):
+                                endQuiz = testset[0].submitted
+                            else:
+                                endQuiz = False
+                        else:
+                             startQuiz = False
+                             endQuiz = False
 
-                    unit = Unit.objects.filter(url_id = unit_id)
-                    serializer = UnitSerializer(unit, many=True)
-                    data["id"] = serializer.data[0]['url_id']
-                    data["index"] = unit[0].index
-                    data["title"] = unit[0].name
+                    guest = Guest.objects.filter(channel = channel[0])
+                    guest_length = len(guest)
+                    if(guest_length != 0):
+                        data["runners"] = [0 for i in range(guest_length)]
+                        for i in range(guest_length):
+                            data["runners"][i] = guest[i].user.first_name
+                    else:
+                         data["runners"] = []
                 else:
                     data["state"] = "fail"
                     data["message"] = "User is not channel\'s host"

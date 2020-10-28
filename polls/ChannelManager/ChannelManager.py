@@ -237,29 +237,32 @@ class channelManager():
                 else:
                      data["runners"] = []
                 unit = Unit.objects.filter(channel = channel[0]).order_by('index')
-                unit_serializer = UnitSerializer(unit, many=True)
-                data["units"] = [0 for i in range(unit.count())]
-                for i in range(unit.count()):
-                    data["units"][i] = OrderedDict()
-                    data["units"][i]["id"] = unit_serializer.data[i]['url_id']
-                    data["units"][i]["index"] = unit_serializer.data[i]['index']
-                    data["units"][i]["title"] = unit_serializer.data[i]['name']
-                    data["units"][i]["state"] = OrderedDict()
-                    data["units"][i]["state"]["hasDocument"] = UnitBKD.objects.filter(unit = unit[i]).exists()
-                    data["units"][i]["state"]["hasPaper"] = UnitQA.objects.filter(unit = unit[i]).exists()
-                    test = UnitTest.objects.filter(unit = unit[i])
-                    if(test.exists()):
-                        startQuiz = test[0].test.released
-                        testset = TestSet.objects.filter(user = user, test = test[0].test)
-                        if(testset.exists()):
-                            endQuiz = testset[0].submitted
+                if(unit.count() != 0):
+                    unit_serializer = UnitSerializer(unit, many=True)
+                    data["units"] = [0 for i in range(unit.count())]
+                    for i in range(unit.count()):
+                        data["units"][i] = OrderedDict()
+                        data["units"][i]["id"] = unit_serializer.data[i]['url_id']
+                        data["units"][i]["index"] = unit_serializer.data[i]['index']
+                        data["units"][i]["title"] = unit_serializer.data[i]['name']
+                        data["units"][i]["state"] = OrderedDict()
+                        data["units"][i]["state"]["hasDocument"] = UnitBKD.objects.filter(unit = unit[i]).exists()
+                        data["units"][i]["state"]["hasPaper"] = UnitQA.objects.filter(unit = unit[i]).exists()
+                        test = UnitTest.objects.filter(unit = unit[i])
+                        if(test.exists()):
+                            startQuiz = test[0].test.released
+                            testset = TestSet.objects.filter(user = user, test = test[0].test)
+                            if(testset.exists()):
+                                endQuiz = testset[0].submitted
+                            else:
+                                endQuiz = False
                         else:
+                            startQuiz = False
                             endQuiz = False
-                    else:
-                         startQuiz = False
-                         endQuiz = False
-                    data["units"][i]["state"]["startQuiz"] = startQuiz
-                    data["units"][i]["state"]["endQuiz"] = endQuiz
+                        data["units"][i]["state"]["startQuiz"] = startQuiz
+                        data["units"][i]["state"]["endQuiz"] = endQuiz
+                else:
+                     data["units"] = []
             else:
                  data["state"] = "fail"
                  data["message"] = "Channel is not exist"
@@ -351,7 +354,7 @@ class channelManager():
                 for i in range(qapair_length):
                     data["paper"]["questions"][i] = OrderedDict()
                     data["paper"]["questions"][i]["id"] = serializer.data[i]['url_id']
-                    data["paper"]["questions"][i]["question"] = qapairs[i].question
+                    data["paper"]["questions"][i]["quiz"] = qapairs[i].question
                     data["paper"]["questions"][i]["answer"] = qapairs[i].answer
                     data["paper"]["questions"][i]["user_answer"] = ''
                     data["paper"]["questions"][i]["answer_set"] = qgapi.stringWithSlash(qapairs[i].answer_set)
