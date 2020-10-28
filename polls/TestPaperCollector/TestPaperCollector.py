@@ -133,7 +133,7 @@ class testPaperCollector():
             if(testset[i].submitted == False):
                 break
             if(i == testset.count()-1):
-                test.ended = True
+                test.test.ended = True
 
         data["state"] = "success"
         data["message"] = "Paper submitted"
