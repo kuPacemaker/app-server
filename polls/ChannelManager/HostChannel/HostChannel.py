@@ -123,7 +123,7 @@ class hostChannel():
                     unit = Unit.objects.filter(url_id = unit_id).order_by('index')
                     unit_serializer = UnitSerializer(unit, many=True)
                     data["units"] = [0 for i in range(unit.count())]
-                    for i in range(unit.count())):
+                    for i in range(unit.count()):
                         data["units"][i] = OrderedDict()
                         data["units"][i]["id"] = unit_serializer.data[i]['url_id']
                         data["units"][i]["index"] = unit_serializer.data[i]['index']
