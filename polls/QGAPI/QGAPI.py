@@ -86,11 +86,11 @@ class qgapi():
                     if(exist_news):
                         for i in range(exist_news.count()):
                             exist_news[i].delete()
-                    else:
-                        news = News.objects.create(ntype = "QUESTION_GENERATION", title = news_title, body = news_body, channel = channel_for_news, unit = unit_for_news)
-                        hosts = Host.objects.filter(channel = channel_for_news)
-                        for host in hosts:
-                            UserNews.objects.create(news = news, user = host.user)
+                    
+                    news = News.objects.create(ntype = "QUESTION_GENERATION", title = news_title, body = news_body, channel = channel_for_news, unit = unit_for_news)
+                    hosts = Host.objects.filter(channel = channel_for_news)
+                    for host in hosts:
+                        UserNews.objects.create(news = news, user = host.user)
 
                     unit_qa = UnitQA.objects.create(qaset = qa_set, unit = unit[0])
                     #객관식 문제 생성이 끝난 qa_set에 대해서
