@@ -119,7 +119,7 @@ class guestChannel():
         
         data["state"] = "success"
         
-        hosts = Host.objects.filter(uset = user)
+        hosts = Host.objects.filter(user = user)
         host_channel = Channel.objects.filter(id__in = hosts.values_list('channel', flat=True))
         hostId_serializer = ChannelIDSerializer(host_channel, many=True)
         host_length = host_channel.count()
