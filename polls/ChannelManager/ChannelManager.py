@@ -363,7 +363,7 @@ class channelManager():
 
             test = UnitTest.objects.filter(unit = unit[0])
             if (test.exists()):
-                isStart = test[0].released
+                isStart = test[0].test.released
                 testset = TestSet.objects.filter(user = user, test = test[0].test)
                 if(testset.exists()):
                     isEnd = testset[0].submitted
