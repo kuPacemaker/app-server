@@ -120,7 +120,7 @@ class hostChannel():
                     data["image"] = channel_serializer.data[0]['image_type']
                     data["leader"] = Host.objects.get(channel = channel[0]).user.first_name
 
-                    unit = Unit.objects.filter(url_id = unit_id).order_by('index')
+                    unit = Unit.objects.filter(channel = channel[0]).order_by('index')
                     unit_serializer = UnitSerializer(unit, many=True)
                     data["units"] = [0 for i in range(unit.count())]
                     for i in range(unit.count()):
@@ -191,7 +191,7 @@ class hostChannel():
                     data["image"] = channel_serializer.data[0]['image_type']
                     data["leader"] = Host.objects.get(channel = channel[0]).user.first_name
 
-                    unit = Unit.objects.filter(url_id = unit_id).order_by('index')
+                    unit = Unit.objects.filter(channel = channel[0]).order_by('index')
                     if(unit.count() != 0):
                         unit_serializer = UnitSerializer(unit,many=True)
                         data["units"] = [0 for i in range(unit.count())]
