@@ -68,7 +68,7 @@ class considerQuestion():
             data["questions"][i]["quiz"] = serializer.data[i]['question']
             data["questions"][i]["answer"] = serializer.data[i]['answer']
             data["questions"][i]["user_answer"] = ''
-            data["questions"][i]["answer_set"] = qgapi.stringWithSlash(qapairs[i].answer_set)
+            data["questions"][i]["answer_set"] = qapairs[i].answer_set
             data["questions"][i]["verified"] = True
 
         json.dumps(data, ensure_ascii=False, indent="\t")

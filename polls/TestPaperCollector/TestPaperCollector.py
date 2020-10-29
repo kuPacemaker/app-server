@@ -75,7 +75,7 @@ class testPaperCollector():
             data["questions"][i]["id"] = serializer.data[i]['url_id']
             data["questions"][i]["index"] = i+1
             data["questions"][i]["quiz"] = testpair[i].pair.question
-            data["questions"][i]["answer_set"] = qgapi.stringWithSlash(testpair[i].pair.answer_set)
+            data["questions"][i]["answer_set"] = testpair[i].pair.answer_set
 
         json.dumps(data, ensure_ascii=False, indent="\t")
 

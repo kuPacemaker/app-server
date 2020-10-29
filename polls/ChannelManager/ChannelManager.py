@@ -382,7 +382,7 @@ class channelManager():
                         data["paper"]["questions"][i]["user_answer"] = TestPair.objects.get(tset = testset, pair = qapairs[i]).user_answer
                     else:
                         data["paper"]["questions"][i]["user_answer"] = ""
-                    data["paper"]["questions"][i]["answer_set"] = qgapi.stringWithSlash(qapairs[i].answer_set)
+                    data["paper"]["questions"][i]["answer_set"] = qapairs[i].answer_set
                     data["paper"]["questions"][i]["verified"] = True
             else:
                  data["paper"]["questions"] = []
