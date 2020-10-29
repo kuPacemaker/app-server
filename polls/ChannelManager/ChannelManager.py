@@ -181,7 +181,7 @@ class channelManager():
             if(channel):
                 #channel 존재
                 user = User.objects.get(id = user_token[0].user_id)
-                host = Host.objects.filter(user = user)
+                host = Host.objects.filter(user = user, channel = channel[0])
                 if(host):
                     host[0].delete()
                     channel[0].delete()
