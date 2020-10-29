@@ -129,8 +129,8 @@ class considerQuestion():
         unit_for_news = Unit.objects.get(url_id = unit_id)
         channel_for_news = unit_for_news.channel
         bkd_for_news = UnitBKD.objects.get(unit = unit_for_news).bkd
-        news_title = "Paper arrived."
-        news_body = "A test paper made by "+bkd.title+" from Unit"+repr(unit_for_news.index)+" "+unit_for_news.name+" of "+channel_for_news.name+" has arrived."
+        news_title = "PAPER ARRIVED"
+        news_body = "A test paper made by "+bkd_for_news.title+" from Unit"+repr(unit_for_news.index)+" "+unit_for_news.name+" of "+channel_for_news.name+" has arrived."
         news = News.objects.create(ntype = "PAPER_RECEIVE", title = news_title, body = news_body, channel = channel_for_news, unit = unit_for_news)
         guests = Guests.objects.filter(channel = channel_for_news)
         for guest in guests:

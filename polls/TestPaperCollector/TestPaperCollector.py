@@ -138,7 +138,7 @@ class testPaperCollector():
                     
                 unit_for_news = Unit.objects.get(url_id = unit_id)
                 channel_for_news = unit_for_news.channel
-                news_title = "Submit all papers"
+                news_title = "SUBMIT ALL PAPERS"
                 news_body = channel_for_news.name+"\'s all runners are finish submitted paper."
                 news = News.objects.create(ntype = "PAPER_FINISH", title = news_title, body = news_body, channel = channel_for_news, unit = unit_for_news)
                 hosts = Host.objects.filter(channel = channel_for_news)
