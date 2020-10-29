@@ -110,7 +110,7 @@ class TestPair(models.Model):
     url_id = models.UUIDField(unique=True, default=uuid.uuid4, editable=False)
     tset = models.ForeignKey(TestSet, db_column='tset_id', on_delete=models.CASCADE)
     pair = models.ForeignKey(QAPair, db_column='pair_id', on_delete=models.CASCADE)
-    user_answer = models.CharField(max_length=20, blank=True)
+    user_answer = models.CharField(max_length=100, blank=True)
     correct = models.BooleanField(default=False)
 
     class Meta:

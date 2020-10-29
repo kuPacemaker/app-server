@@ -85,6 +85,7 @@ class considerQuestion():
 
         user_token = Token.objects.filter(key = token)
         unit = Unit.objects.filter(url_id = unit_id)
+        qaset = UnitQA.objects.get(unit = unit[0]).qaset
         if not (user_token.exists()):
             data["state"] = "fail"
             data["message"] = "Token is not exist"
@@ -94,6 +95,9 @@ class considerQuestion():
         elif not (UnitQA.objects.filter(unit = unit[0]).exists()):
             data["state"] = "fail"
             data["message"] = "QASet is not exist"
+        elif not (TestPaln.objects.filter(qaset = qaset).exists()):
+            data["state"] = "fail"
+            data["message"] = "Reservation is already exist"
         else:
             host = Host.objects.get(channel = unit[0].channel)
             user = User.objects.get(id = user_token[0].user_id)
@@ -125,6 +129,7 @@ class considerQuestion():
             testset.save()
             for i in range(qapair.count()):
                 TestPair.objects.create(tset = testset, pair = qapair[i])
+
 
         unit_for_news = Unit.objects.get(url_id = unit_id)
         channel_for_news = unit_for_news.channel

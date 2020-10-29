@@ -192,7 +192,7 @@ class channelManager():
                     host_length = len(host_channel_list)
                     guest_length = len(guest_channel_list)
                     
-                    data["leader"] = [0 for i in rnage(host_length)]
+                    data["leader"] = [0 for i in range(host_length)]
                     for i in range(host_length):
                         host_channel = Channel.objects.filter(id=host_channel_list[i].id)
                         serializer = ChannelIDSerializer(host_channel, many=True)

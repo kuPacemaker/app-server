@@ -79,10 +79,15 @@ class guestChannel():
 
         return JsonResponse(data, safe=False)
         
-
-#def browseGuestChapter():
-
-#def withdrawChannel():
-
-#def joinChannel():
-
+    @api_view(['POST'])
+    def exitChannel(request):
+        token = request.data['token']
+        channel_id = uuid.UUID(uuid.UUID(request.data['channel_id']).hex)
+        data = OrderedDict()
+        
+        user_token = Token.objects.filter(key = token)
+        channel = Channel.objects.filter(url_id = channel_id)
+        
+        if not(user_token.exists()):
+            data["state"] = "fail"
+#data["
