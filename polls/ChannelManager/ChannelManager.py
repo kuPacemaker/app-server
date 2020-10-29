@@ -189,7 +189,28 @@ class channelManager():
                     host[0].delete()
                     channel[0].delete()
                     data["state"] = "success"
-                    data["message"] = "Channel is deleted."
+                    
+                    user = User.objects.get(id = user_token[0].user_id)
+                    host_channel_list = channelManager.requestHostChannelList(token)
+                    guest_channel_list = channelManager.requestGuestChannelList(token)
+                    host_length = len(host_channel_list)
+                    guest_length = len(guest_channel_list)
+                    
+                    data["leader"] = [0 for i in rnage(host_length)]
+                    for i in range(host_length):
+                        host_channel = Channel.objects.filter(id=host_channel_list[i].id)
+                        serializer = ChannelIDSerializer(host_channel, many=True)
+                        data["leader"][i] = OrderedDict()
+                        data["leader"][i]["id"] = serializer.data[0]['url_id']
+                        data["leader"][i]["title"] = host_channel_list[i].name
+                        data["leader"][i]["detail"] = host_channel_list[i].description
+                        data["leader"][i]["image"] = host_channel_list[i].image_type
+                        data["leader"][i]["leader_name"] = Host.objects.get(
+
+                    
+
+
+
                 else:
                     data["state"] = "fail"
                     data["message"] = "User is not channel\'s host"
