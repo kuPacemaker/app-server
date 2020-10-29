@@ -180,7 +180,8 @@ class channelManager():
             channel = Channel.objects.filter(url_id = channel_id)
             if(channel):
                 #channel 존재
-                host = Host.objects.filter(channel = channel[0])
+                user = User.objects.get(id = user_token[0].user_id)
+                host = Host.objects.filter(user = user)
                 if(host):
                     host[0].delete()
                     channel[0].delete()
