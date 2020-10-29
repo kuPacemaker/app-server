@@ -18,7 +18,7 @@ class hostChannel():
     def createUnit(request):
         token = request.data['token']
         channel_id = uuid.UUID(uuid.UUID(request.data['channel_id']).hex)
-        index = request.data['index']
+#index = request.data['index']
         title = request.data['title']
         user_token = Token.objects.filter(key = token)
         data = OrderedDict()
@@ -30,7 +30,7 @@ class hostChannel():
             host = Host.objects.get(channel=channel[0])
             user = User.objects.filter(id=user_token.user_id)
             if(user[0] == host.user):
-                unit = Unit.objects.create(channel = channel[0], index=index, name=title)
+                unit = Unit.objects.create(channel = channel[0], name=title)
                 unit_list = Unit.objects.filter(channel=channel[0]).order_by('index')
                 unit_serializer = UnitSerializer(unit_list,many=True)
                 unit_length = len(unit_list)       
@@ -92,7 +92,7 @@ class hostChannel():
     def editUnit(request):
         token = request.data['token']
         unit_id = uuid.UUID(uuid.UUID(request.data['unit_id']).hex)
-        index = request.data['index']
+#index = request.data['index']
         title = request.data['title']
         user_token = Token.objects.filter(key = token)
         data = OrderedDict()
@@ -104,8 +104,8 @@ class hostChannel():
                 if(user_token[0].user_id == host[0].user.id):
                     exist_unit = Unit.objects.filter(channel = unit[0].channel, index = index)
                     unit = Unit.objects.get(url_id = unit_id)
-                    if(not exist_unit):
-                        unit.index = index
+#if(not exist_unit):
+#unit.index = index
                     if(title != ""):
                         unit.name = title
                     unit.save()
@@ -181,6 +181,14 @@ class hostChannel():
                 if(user_token[0].user_id == host[0].user.id):
                     unit = Unit.objects.get(url_id = unit_id)
                     unit.delete()
+
+                    i = 1
+                    unit_ind = Unit.objects.filter(channel = unit.channel)
+                    for unit in unit_ind:
+                        unit.index = i
+                        unit.save()
+                        i = i+1
+
                     data["state"] = "success"
                     channel = Channel.objects.filter(id = unit.channel.id)
                     channel_serializer = ChannelInfoSerializer(channel, many=True)
