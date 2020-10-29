@@ -4,8 +4,8 @@ import random
 class choiceProblemGenerator():
     def choiceProblemGenerator(nouns, aqset):
         count = len(nouns)
-        print(count)
         length = len(aqset)
+        print(length)
         count_for_arr = 0
 
         question = [0 for i in range(length)]
