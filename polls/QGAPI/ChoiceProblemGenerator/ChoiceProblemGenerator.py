@@ -5,7 +5,7 @@ class choiceProblemGenerator():
     def choiceProblemGenerator(nouns, aqset):
         count = len(nouns)
         length = len(aqset)
-        count = 0
+        count_for_arr = 0
 
         question = [0 for i in range(length)]
         answer = [0 for i in range(length)]
@@ -15,7 +15,7 @@ class choiceProblemGenerator():
 
         for i in range(length):
             prev_rand_num = [-1 for i in range(3)]
-            count = 0
+            count_for_arr = 0
             random_answer_position = random.randint(0,3)
             question[i] = aqset[i][1]
             answer[i] = aqset[i][0]
@@ -24,9 +24,9 @@ class choiceProblemGenerator():
                     random_noun_choice = random.randint(0,count-1)
                     while(random_noun_choice == i or random_noun_choice == prev_rand_num[0] or random_noun_choice == prev_rand_num[1] or random_noun_choice == prev_rand_num[2]):
                         random_noun_choice = random.randint(0,count-1)
-                    prev_rand_num[count] = random_noun_choice
+                    prev_rand_num[count_for_arr] = random_noun_choice
                     answerset[i] += nouns[random_noun_choice]
-                    count += 1
+                    count_for_arr += 1
                 else:
                     answerset[i] += answer[i]
 
