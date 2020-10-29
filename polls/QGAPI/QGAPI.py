@@ -61,8 +61,6 @@ class qgapi():
                     if(unitqa.exists()):
                         unitqa[0].qaset.delete()
 
-
-
                     unit_bkd = UnitBKD.objects.get(unit = unit[0])
                     bkd = BKD.objects.get(id = unit_bkd.bkd.id)
         
@@ -80,7 +78,6 @@ class qgapi():
     
                     qa_set = choiceProblemGenerator.choiceProblemGenerator(nouns,aqset)
                     
-
                     unit_for_news = Unit.objects.get(url_id = unit_id)
                     channel_for_news = unit_for_news.channel
                     news_title = "COMPLETE QUESTION GENERATION"
@@ -99,8 +96,9 @@ class qgapi():
                     serializer = QAPairSerializer(qa_pair, many=True)
 
                     #여기서부터 json 형식의 파일을 만들기 위한 작업을 한다.
-                    data["isStart"] = None
-                    data["isEnd"] = None
+                    data["state"] = "success"
+                    data["isStart"] = False
+                    data["isEnd"] = False
                     data["questions"] = [0 for i in range(length)]
             
                     for i in range(length):
@@ -113,12 +111,15 @@ class qgapi():
                         #이 부분은 str 형식으로 저장되어 있어서 단어를 따로 찾아서 /로 연결해주기 위한 함수를 호출한다
                         data["questions"][i]["verified"] = True
                 else:
-                    data["message"] = 'User is not this channel\'s host'
+                    data["state"] = "fail"
+                    data["message"] = "User is not this channel\'s host"
             else:
-                data["message"] = 'Unit is not exist'
+                data["state"] = "fail"
+                data["message"] = "Unit is not exist"
         else:
             #token 미존재
-            data["message"] = 'Token is not exist'
+            data["state"] = "fail"
+            data["message"] = "Token is not exist"
 
         json.dumps(data, ensure_ascii=False, indent="\t")
 

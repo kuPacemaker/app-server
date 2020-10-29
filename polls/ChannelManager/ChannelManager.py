@@ -79,7 +79,6 @@ class channelManager():
                 data["leader"][i]["title"] = host_channel_list[i].name
                 data["leader"][i]["detail"] = host_channel_list[i].description
                 data["leader"][i]["image"] = host_channel_list[i].image_type
-                data["leader"][i]["leader_name"] = Host.objects.get(channel = host_channel_list[i]).user.first_name
                
             new_channel = Channel.objects.create(name=channel_name, description=channel_desc, accesspath=channel_join_code, image_type = image)
             Host.objects.create(channel = new_channel, user = user)
@@ -92,7 +91,6 @@ class channelManager():
             data["leader"][host_length]["title"] = new_channel_serializer.data[0]['name']
             data["leader"][host_length]["detail"] = new_channel_serializer.data[0]['description']
             data["leader"][host_length]["image"] = new_channel_serializer.data[0]['image_type']
-            data["leader"][host_length]["leader_name"] = user.first_name
 
             data["runner"] = [0 for i in range(guest_length+1)]
             for i in range(guest_length):
@@ -104,7 +102,6 @@ class channelManager():
                 data["runner"][i]["title"] = guest_channel_list[i].name
                 data["runner"][i]["detail"] = guest_channel_list[i].description
                 data["runner"][i]["image"] = guest_channel_list[i].image_type
-                data["runner"][i]["leader_name"] = Host.objects.get(channel = guest_channel_list[i]).user.first_name
             
             #새로 생성한 guest channel list
             data["runner"][guest_length] = OrderedDict()
@@ -112,7 +109,6 @@ class channelManager():
             data["runner"][guest_length]["title"] = new_channel_serializer.data[0]['name']
             data["runner"][guest_length]["detail"] = new_channel_serializer.data[0]['description']
             data["runner"][guest_length]["image"] = new_channel_serializer.data[0]['image_type']
-            data["runner"][guest_length]["leader_name"] = user.first_name
 
         else:
             #token 미존재
@@ -205,7 +201,17 @@ class channelManager():
                         data["leader"][i]["title"] = host_channel_list[i].name
                         data["leader"][i]["detail"] = host_channel_list[i].description
                         data["leader"][i]["image"] = host_channel_list[i].image_type
-#data["leader"][i]["leader_name"] = Host.objects.get(
+                        
+                    data["runner"] = [0 for i in range(guest_length)]
+                    for i in range(guest_length):
+                        guest_channel = Channel.objects.filter(id=guest_channel_list[i].id)
+                        serializer = ChannelIDSerializer(guest_channel, many=True)
+                        data["runner"][i] = OrderedDict()
+                        data["runner"][i]["id"] = serializer.data[0]['url_id']
+                        data["runner"][i]["title"] = guest_channel_list[i].name
+                        data["runner"][i]["detail"] = guest_channel_list[i].description
+                        data["runner"][i]["image"] = guest_channel_list[i].image_type
+
                 else:
                     data["state"] = "fail"
                     data["message"] = "User is not channel\'s host"
