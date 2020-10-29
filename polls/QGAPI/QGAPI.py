@@ -111,7 +111,7 @@ class qgapi():
                         data["questions"][i]["quiz"] = serializer.data[i]['question']
                         data["questions"][i]["answer"] = serializer.data[i]['answer']
                         data["questions"][i]["user_answer"] = ''
-                        data["questions"][i]["answer_set"] = serializer.dat[i]['answer_set']#qgapi.stringWithSlash(qa_pair[i].answer_set)
+                        data["questions"][i]["answer_set"] = serializer.data[i]['answer_set']#qgapi.stringWithSlash(qa_pair[i].answer_set)
                         #이 부분은 str 형식으로 저장되어 있어서 단어를 따로 찾아서 /로 연결해주기 위한 함수를 호출한다
                         data["questions"][i]["verified"] = True
                 else:
