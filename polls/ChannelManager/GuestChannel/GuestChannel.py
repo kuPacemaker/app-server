@@ -90,4 +90,59 @@ class guestChannel():
         
         if not(user_token.exists()):
             data["state"] = "fail"
-#data["
+            data["message"] = "Token is not exist"
+        elif not(channel.exists()):
+            data["state"] = "fail"
+            data["message"] = "Channel is not exist"
+        else:
+            user = User.objects.get(id = user_token[0].user_id)
+            if not(Guest.objects.filter(user = user, channel = channel[0]).exists()):
+                data["state"] = "fail"
+                data["message"] = "User is not channel\'s guest"
+            elif (Host.objects.filter(user = user, channel = channel[0]).exists()):
+                data["state"] = "fail"
+                data["message"] = "Host cannot exit channel"
+
+        if bool(data):
+            json.dumps(data, ensure_ascii=False, indent="\t")
+            return JsonResponse(data, safe=False)
+
+        user = User.objects.get(id = user_token[0].user_id)
+        guest = Guest.objects.get(user = user, channel = channel[0])
+        guest.delete()
+
+        units = Unit.objects.filter(channel = channel[0])
+        unittests = UnitTest.objects.filter(unit__in = units)
+        tests = TestPlan.objects.filter(id__in = unittests.values_list('test'), flat=True)
+        testsets = TestSet.objects.filter(user = user, test__in = tests)
+        testsets.delete()
+        
+        data["state"] = "success"
+        
+        hosts = Host.objects.filter(uset = user)
+        host_channel = Channel.objects.filter(id__in = hosts.values_list('channel', flat=True))
+        hostId_serializer = ChannelIDSerializer(host_channel, many=True)
+        host_length = host_channel.count()
+        data["leader"] = [0 for i in range(host_length)]
+        for i in range(host_length):
+            data["leader"][i] = OrderedDict()
+            data["leader"][i]["id"] = hostId_serializer.data[i]['url_id']
+            data["leader"][i]["title"] = host_channel[i].name
+            data["leader"][i]["detail"] = host_channel[i].description
+            data["leader"][i]["image"] = host_channel[i].image_type
+
+        guests = Guest.objects.filter(user = user)
+        guest_channel = Channel.objects.filter(id__in = guests.values_list('channel', flat=True))
+        guestId_serializer = ChannelIDSerializer(guest_channel, many=True)
+        guest_length = guest_channel.count()
+        data["runner"] = [0 for i in range(guest_length)]
+        for i in range(guest_length):
+            data["runner"][i] = OrderedDict()
+            data["runner"][i]["id"] = guestId_serializer.data[i]['url_id']
+            data["runner"][i]["title"] = guest_channel[i].name
+            data["runner"][i]["detail"] = guest_channel[i].description
+            data["runner"][i]["image"] = guest_channel[i].image_type
+
+        json.dumps(data, ensure_ascii=False, indent="\t")
+
+        return JsonReponse(data, safe=False)
