@@ -95,7 +95,7 @@ class considerQuestion():
         elif not (UnitQA.objects.filter(unit = unit[0]).exists()):
             data["state"] = "fail"
             data["message"] = "QASet is not exist"
-        elif not (TestPlan.objects.filter(qaset = qaset).exists()):
+        elif (TestPlan.objects.filter(qaset = qaset).exists()):
             data["state"] = "fail"
             data["message"] = "Reservation is already exist"
         else:
