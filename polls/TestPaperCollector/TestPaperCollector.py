@@ -140,7 +140,7 @@ class testPaperCollector():
                 channel_for_news = unit_for_news.channel
                 news_title = "Submit all papers"
                 news_body = channel_for_news.name+"\'s all runners are finish submitted paper."
-                news = News.objects.create(title = news_title, body = news_body, channel = channel_for_news, unit = unit_for_news)
+                news = News.objects.create(ntype = "PAPER_FINISH", title = news_title, body = news_body, channel = channel_for_news, unit = unit_for_news)
                 hosts = Host.objects.filter(channel = channel_for_news)
                 for host in hosts:
                     UserNews.objects.create(news = news, user = host.user)
