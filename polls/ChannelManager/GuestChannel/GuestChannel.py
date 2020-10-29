@@ -113,7 +113,7 @@ class guestChannel():
 
         units = Unit.objects.filter(channel = channel[0])
         unittests = UnitTest.objects.filter(unit__in = units)
-        tests = TestPlan.objects.filter(id__in = unittests.values_list('test'), flat=True))
+        tests = TestPlan.objects.filter(id__in = unittests.values_list('test', flat=True))
         testsets = TestSet.objects.filter(user = user, test__in = tests)
         testsets.delete()
         
