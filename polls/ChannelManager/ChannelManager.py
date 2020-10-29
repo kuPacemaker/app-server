@@ -20,13 +20,8 @@ class channelManager():
             if(host):
                 serializer = HostSerializer(host, many=True)
                 length = len(serializer.data)
-                print(length)
                 for i in range(length):
                     host_channel_list += Channel.objects.filter(id=serializer.data[i]['channel'])
-            else:
-                print("HOST CHANNEL IS NOT EXIST")
-        else:
-            print("TOKEN IS NOT EXIST")
         
         return host_channel_list
         
@@ -43,10 +38,6 @@ class channelManager():
                 length = len(serializer.data)
                 for i in range(length):
                     guest_channel_list += Channel.objects.filter(id=serializer.data[i]['channel'])
-            else:
-                print("GUEST CHANNEL IS NOT EXIST")
-        else:
-             print("TOKEN IS NOT EXIST")
 
         return guest_channel_list
 
