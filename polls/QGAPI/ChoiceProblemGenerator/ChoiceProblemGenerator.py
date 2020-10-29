@@ -23,7 +23,7 @@ class choiceProblemGenerator():
                 else:
                     answerset[i] += answer[i]
 
-                if(j == 3):
+                if(j != 3):
                     #각 quiz의 보기들을 /로 구별하여 하나의 문자열로 만들어준다.
                     answerset[i] += '/'
         
