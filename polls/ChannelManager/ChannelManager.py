@@ -205,12 +205,7 @@ class channelManager():
                         data["leader"][i]["title"] = host_channel_list[i].name
                         data["leader"][i]["detail"] = host_channel_list[i].description
                         data["leader"][i]["image"] = host_channel_list[i].image_type
-                        data["leader"][i]["leader_name"] = Host.objects.get(
-
-                    
-
-
-
+#data["leader"][i]["leader_name"] = Host.objects.get(
                 else:
                     data["state"] = "fail"
                     data["message"] = "User is not channel\'s host"
