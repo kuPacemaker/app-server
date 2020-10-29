@@ -139,7 +139,7 @@ class considerQuestion():
         news_title = "NEW QUIZ IS OPENED"
         news_body = channel_for_news.name+", "+Host.objects.get(channel = channel_for_news).user.first_name+", "+channel_for_news.description
         news = News.objects.create(ntype = "PAPER_RECEIVE", title = news_title, body = news_body, channel = channel_for_news, unit = unit_for_news)
-        guests = Guests.objects.filter(channel = channel_for_news)
+        guests = Guest.objects.filter(channel = channel_for_news)
         for guest in guests:
             UserNews.objects.create(news = news, user = guest.user)
 
