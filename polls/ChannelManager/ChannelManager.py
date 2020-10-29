@@ -361,13 +361,20 @@ class channelManager():
         if (UnitQA.objects.filter(unit = unit[0]).exists()):
             qaset = UnitQA.objects.get(unit = unit[0]).qaset
 
-            if (UnitTest.objects.filter(unit = unit[0]).exists()):
-                test = UnitTest.objects.get(unit = unit[0]).test
-                data["paper"]["isStart"] = test.released
-                data["paper"]["isEnd"] = test.ended
+            test = UnitTest.objects.filter(unit = unit[0])
+            if (test.exists()):
+                isStart = test[0].released
+                testset = TestSet.objects.filter(user = user, test = test[0].test)
+                if(testset.exists()):
+                    isEnd = testset[0].submitted
+                else:
+                    isEnd = False
             else:
-                data["paper"]["isStart"] = None
-                data["paper"]["isEnd"] = None
+                isStart = False
+                isEnd = False
+            
+            data["paper"]["isStart"] = isStart
+            data["paper"]["isEnd"] = isEnd
 
             qapairs = QAPair.objects.filter(qaset = qaset)
             qapair_length = qapairs.count()
@@ -379,7 +386,12 @@ class channelManager():
                     data["paper"]["questions"][i]["id"] = serializer.data[i]['url_id']
                     data["paper"]["questions"][i]["quiz"] = qapairs[i].question
                     data["paper"]["questions"][i]["answer"] = qapairs[i].answer
-                    data["paper"]["questions"][i]["user_answer"] = ''
+                    if(test.exists()):
+                        testplan = TestPlan.objects.get(qaset = qaset)
+                        testset = TestSet.objects.get(user = user, test = testplan)
+                        data["paper"]["questions"][i]["user_answer"] = TestPair.objects.get(tset = testset, pair = qapairs[i]).user_answer
+                    else:
+                        data["paper"]["questions"][i]["user_answer"] = ""
                     data["paper"]["questions"][i]["answer_set"] = qgapi.stringWithSlash(qapairs[i].answer_set)
                     data["paper"]["questions"][i]["verified"] = True
             else:
