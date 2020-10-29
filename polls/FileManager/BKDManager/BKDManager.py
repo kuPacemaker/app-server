@@ -19,15 +19,18 @@ class bkdManager():
                 unit_bkd = UnitBKD.objects.get(unit = unit[0])
                 bkd = BKD.objects.filter(id=unit_bkd.bkd.id)
                 serializer = BKDIDSerializer(bkd,many=True)
+                data["state"] = "success"
                 data["id"] = serializer.data[0]['url_id']
                 data["visible"] = unit_bkd.opened
                 data["title"] = bkd[0].title
                 data["body"] = bkd[0].body
 
             else:
-                data["message"] = 'Unit is not exist'
+                data["state"] = "fail"
+                data["message"] = "Unit is not exist"
         else:
-            data["message"] = 'Token is not exist'
+            data["state"] = "fail"
+            data["message"] = "Token is not exist"
 
         json.dumps(data, ensure_ascii=False, indent="\t")
 
@@ -49,17 +52,21 @@ class bkdManager():
                     bkd_owner = BKDOwner.objects.create(user=host.user, bkd=bkd)
                     bkd = BKD.objects.filter(id = bkd.id)
                     serializer = BKDIDSerializer(bkd,many=True)
+                    data["state"] = "success"
                     data["id"] = serializer.data[0]['url_id']
                     data["visible"] = unit_bkd.opened
                     data["title"] = bkd[0].title
                     data["body"] = bkd[0].body
 
                 else:
-                    data["message"] = 'User is not channel\'s host'
+                    data["state"] = "fail"
+                    data["message"] = "User is not channel\'s host"
             else:
-                data["message"] = 'Unit is not exist'
+                data["state"] = "fail"
+                data["message"] = "Unit is not exist"
         else:
-            data["message"] = 'token is not exist'
+            data["state"] = "fail"
+            data["message"] = "Token is not exist"
 
         json.dumps(data, ensure_ascii=False, indent="\t")
 
@@ -88,6 +95,7 @@ class bkdManager():
                         bkd[0].body = body
                     bkd[0].save()
 
+                    data["state"] = "success"
                     serializer = BKDIDSerializer(bkd,many=True)
                     data["id"] = serializer.data[0]['url_id']
                     data["visible"] = bkd[0].opened
@@ -95,11 +103,14 @@ class bkdManager():
                     data["body"] = bkd[0].body
 
                 else:
-                    data["message"] = 'User is not channel\'s host'
+                    data["state"] = "fail"
+                    data["message"] = "User is not channel\'s host"
             else:
-                data["message"] = 'BKD is not exist'
+                data["state"] = "fail"
+                data["message"] = "BKD is not exist"
         else:
-            data["message"] = 'token is not exist'
+            data["state"] = "fail"
+            data["message"] = "Token is not exist"
 
         json.dumps(data, ensure_ascii=False, indent="\t")
 
@@ -119,13 +130,21 @@ class bkdManager():
                 if(bkd_owner):
                     bkd[0].delete()
                     bkd[0].save()
-                    data["message"] = 'BKD is deleted'
+                    data["state"] = "success"
+                    data["message"] = "BKD is deleted"
+                    data["id"] = None
+                    data["visible"] = False
+                    data["title"] = ""
+                    data["body"] = ""
                 else:
-                    data["message"] = 'User is not channel\'s host'
+                    data["state"] = "fail"
+                    data["message"] = "User is not channel\'s host"
             else:
-                data["message"] = 'BKD is not exist'
+                data["state"] = "fail"
+                data["message"] = "BKD is not exist"
         else:
-            data["message"] = 'Token is not exist'
+            data["state"] = "fail"
+            data["message"] = "Token is not exist"
 
         json.dumps(data, ensure_ascii=False, indent = "\t")
 
