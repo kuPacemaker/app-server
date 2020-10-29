@@ -145,4 +145,4 @@ class guestChannel():
 
         json.dumps(data, ensure_ascii=False, indent="\t")
 
-        return JsonReponse(data, safe=False)
+        return JsonResponse(data, safe=False)
