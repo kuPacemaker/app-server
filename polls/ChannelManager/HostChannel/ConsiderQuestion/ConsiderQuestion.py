@@ -126,7 +126,7 @@ class considerQuestion():
         for guest in guests:
             testset = TestSet.objects.create(user = guest.user, test = new_testplan)
             testset.received = True
-            if(Host.objects.filter(user = testset.user).exists()):
+            if(Host.objects.filter(user = testset.user, channel = channel).exists()):
                 testset.submitted = True
             testset.save()
             for i in range(qapair.count()):
