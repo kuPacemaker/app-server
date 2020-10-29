@@ -95,7 +95,7 @@ class considerQuestion():
         elif not (UnitQA.objects.filter(unit = unit[0]).exists()):
             data["state"] = "fail"
             data["message"] = "QASet is not exist"
-        elif not (TestPaln.objects.filter(qaset = qaset).exists()):
+        elif not (TestPlan.objects.filter(qaset = qaset).exists()):
             data["state"] = "fail"
             data["message"] = "Reservation is already exist"
         else:
@@ -126,6 +126,8 @@ class considerQuestion():
         for guest in guests:
             testset = TestSet.objects.create(user = guest.user, test = new_testplan)
             testset.received = True
+            if(Host.objects.filter(user = testset.user).exists()):
+                testset.submitted = True
             testset.save()
             for i in range(qapair.count()):
                 TestPair.objects.create(tset = testset, pair = qapair[i])
@@ -134,8 +136,8 @@ class considerQuestion():
         unit_for_news = Unit.objects.get(url_id = unit_id)
         channel_for_news = unit_for_news.channel
         bkd_for_news = UnitBKD.objects.get(unit = unit_for_news).bkd
-        news_title = "PAPER ARRIVED"
-        news_body = "A test paper made by "+bkd_for_news.title+" from Unit"+repr(unit_for_news.index)+" "+unit_for_news.name+" of "+channel_for_news.name+" has arrived."
+        news_title = "NEW QUIZ IS OPENED"
+        news_body = channel_for_news.name+", "+Host.objects.get(channel = channel_for_news).user.first_name+", "+channel_for_news.description
         news = News.objects.create(ntype = "PAPER_RECEIVE", title = news_title, body = news_body, channel = channel_for_news, unit = unit_for_news)
         guests = Guests.objects.filter(channel = channel_for_news)
         for guest in guests:
