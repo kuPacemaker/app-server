@@ -20,6 +20,9 @@ class accountManager():
             #DB에 저장된 email이 uid와 일치함
             if(user.password == pw):
                 #DB에 저장된 email과 쌍을 이루는 password가 upw와 일치함                
+                past_token = Token.objects.get(user_id = user.id)
+                past_token.delete()
+                Token.objects.create(user = user)
                 token = Token.objects.filter(user_id = user.id)
                 serializer = TokenSerializer(token, many=True)
 
