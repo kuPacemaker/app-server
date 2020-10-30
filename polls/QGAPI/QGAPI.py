@@ -81,7 +81,7 @@ class qgapi():
                     unit_for_news = Unit.objects.get(url_id = unit_id)
                     channel_for_news = unit_for_news.channel
                     news_title = "NEW QUESTIONS WERE RECEIVED"
-                    news_body = channel_for_news.name+", "+Host.objects.get(channel = channel_for_news).user.first_name+", "+channel_for_news.description
+                    news_body = channel_for_news.name+"/"+unit_for_news.name+", "+Host.objects.get(channel = channel_for_news).user.first_name+", "+channel_for_news.description
                     exist_news = News.objects.filter(ntype = "QUESTION_GENERATION", unit = unit_for_news)
                     if(exist_news):
                         for i in range(exist_news.count()):

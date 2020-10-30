@@ -139,7 +139,7 @@ class testPaperCollector():
                 unit_for_news = Unit.objects.get(url_id = unit_id)
                 channel_for_news = unit_for_news.channel
                 news_title = "EVERYONE FINISHED THE QUIZ"
-                news_body = channel_for_news.name+", "+Host.objects.get(channel = channel_for_news).user.first_name+", "+channel_for_news.description
+                news_body = channel_for_news.name+"/"+unit_for_news.name+", "+Host.objects.get(channel = channel_for_news).user.first_name+", "+channel_for_news.description
                 news = News.objects.create(ntype = "PAPER_FINISH", title = news_title, body = news_body, channel = channel_for_news, unit = unit_for_news)
                 hosts = Host.objects.filter(channel = channel_for_news)
                 for host in hosts:
