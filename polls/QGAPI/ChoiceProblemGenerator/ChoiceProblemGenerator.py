@@ -31,7 +31,7 @@ class choiceProblemGenerator():
                     #answerset에 추가된 단어가 있다면
                     else:
                         #정답이랑도 일치하지 않고, answerset에 추가되지도 않은 명사를 뽑을때까지 랜덤함수 반복
-                        while((answer[i] == nouns[random_noun_choice]) or (prev_random_nouns[0] == nouns[random_noun_choice]) or (prev_random_nouns[-1] == nouns[random_noun_choice]):
+                        while((answer[i] == nouns[random_noun_choice]) or (prev_random_nouns[0] == nouns[random_noun_choice]) or (prev_random_nouns[-1] == nouns[random_noun_choice])):
                             random_noun_choice = random.randint(0,count-1)
                     #answerset에 추가된 단어를 담아두는 배열에다가 answerset에 추가된 단어를 넣음
                     prev_random_nouns.append(nouns[random_noun_choice])
