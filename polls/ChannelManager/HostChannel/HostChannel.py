@@ -48,7 +48,7 @@ class hostChannel():
                     test = UnitTest.objects.filter(unit = unit_list[i])
                     if(test.exists()):
                         startQuiz = test[0].test.released
-                        testset = Testset.objects.filter(user = user[0], test = test[0].test)
+                        testset = TestSet.objects.filter(user = user[0], test = test[0].test)
                         if(testset.exists()):
                             endQuiz = testset[0].submitted
                         else:
