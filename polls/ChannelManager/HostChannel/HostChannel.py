@@ -173,12 +173,12 @@ class hostChannel():
                 host = Host.objects.filter(channel = unit[0].channel)
                 if(user_token[0].user_id == host[0].user.id):
                     unit = Unit.objects.get(url_id = unit_id)
-                    unit_qaset = UnitQA.objects.filter(unit = unit)
-                    for qasets in unit_qaset:
-                        qasets.delete()
+                    unit_qa = UnitQA.objects.filter(unit = unit)
+                    for i in range(unit_qa.count()):
+                        unit_qa[i].qaset.delete()
                     unit_bkd = UnitBKD.objects.filter(unit = unit)
-                    for bkds in unit_bkd:
-                        bkds.delete()
+                    for i in range(unit_bkd.count()):
+                        unit_bkd[i].bkd.delete()
                     unit_bkd.delete()
                     unit.delete()
 
