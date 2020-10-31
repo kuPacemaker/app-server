@@ -59,7 +59,7 @@ class accountManager():
         else:        
             #존재하지 않으므로 사용 가능함
             user = User.objects.create(username = uid, password = pw, first_name = name)
-            data["state"] = "success."
+            data["state"] = "success"
             data["message"] = "Sign up completed."
 
         json.dumps(data, ensure_ascii=False, indent="\t")

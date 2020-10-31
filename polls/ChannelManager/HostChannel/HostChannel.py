@@ -7,13 +7,6 @@ from rest_framework.decorators import api_view
 import json, uuid
 
 class hostChannel():
-    def ChannelJoinCodeGenerate():
-        joinCode = channelJoinCodeGenerator.channelJoinCodeGenerate() #생성된 채널코드
-
-        return joinCode
-
-#def excludeChannelMember():
-
     @api_view(['POST'])
     def createUnit(request):
         token = request.data['token']
@@ -249,12 +242,3 @@ class hostChannel():
         json.dumps(data, ensure_ascii=False, indent="\t")
 
         return JsonResponse(data, safe=False)
-
-#def registerBKD():
-
-#def requestChapterList():
-
-#def enterHostChannel():
-
-#def browseHostChapter():
-
