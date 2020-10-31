@@ -174,6 +174,14 @@ class channelManager():
                 user = User.objects.get(id = user_token[0].user_id)
                 host = Host.objects.filter(user = user, channel = channel[0])
                 if(host):
+                    unit = Unit.objects.filter(channel = channel[0])
+                    for i in range(unit.count()):
+                        unit_qa = UnitQA.objects.filter(unit = unit[i])
+                        for j in range(unit_qa.count()):
+                            unit_qa[j].qaset.delete()
+                        unit_bkd = UnitBKD.objects.filter(unit = unit[i])
+                        for j in range(unit_bkd.count()):
+                            unit_bkd[j].bkd.delete()
                     channel[0].delete()
                     data["state"] = "success"
                     
