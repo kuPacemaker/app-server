@@ -38,7 +38,7 @@ class User(AbstractUser):
 
 class BKD(models.Model):
     url_id = models.UUIDField(unique=True, default=uuid.uuid4, editable=False)
-    title = models.CharField(max_length=20)
+    title = models.CharField(max_length=72)
     body = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
