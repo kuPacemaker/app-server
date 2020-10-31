@@ -95,7 +95,7 @@ class hostChannel():
             if(unit):
                 host = Host.objects.filter(channel = unit[0].channel)
                 if(user_token[0].user_id == host[0].user.id):
-                    exist_unit = Unit.objects.filter(channel = unit[0].channel, index = index)
+#exist_unit = Unit.objects.filter(channel = unit[0].channel, index = index)
                     unit = Unit.objects.get(url_id = unit_id)
 #if(not exist_unit):
 #unit.index = index
@@ -173,6 +173,10 @@ class hostChannel():
                 host = Host.objects.filter(channel = unit[0].channel)
                 if(user_token[0].user_id == host[0].user.id):
                     unit = Unit.objects.get(url_id = unit_id)
+                    unit_qaset = UnitQA.objects.filter(unit = unit)
+                    unit_qaset.delete()
+                    unit_bkd = UnitBKD.objects.filter(unit = unit)
+                    unit_bkd.delete()
                     unit.delete()
 
                     i = 1
