@@ -15,6 +15,7 @@ class accountManager():
         cipher = AESCipher()
         uid = cipher.encrypt(request.data['id'])
         pw = cipher.encrypt(request.data['pw'])
+        print(uid,pw)
         user = User.objects.filter(username = uid)
         data = OrderedDict()
         if(user):
