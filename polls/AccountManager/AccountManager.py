@@ -13,15 +13,17 @@ class accountManager():
     @api_view(['POST'])
     def signIn(request):
         cipher = AESCipher()
-        uid = cipher.encrypt(request.data['id'])
-        pw = cipher.encrypt(request.data['pw'])
-        print(uid,pw)
-        user = User.objects.filter(username = uid)
+        uid = request.data['id']
+        pw = request.data['pw']
+        user_list = User.objects.all()
+        user = None
+        for i in range(user_list.count()):
+            if(cipher.decrypt(user_list[i].username) == uid):
+                user = user_list[i]
         data = OrderedDict()
         if(user):
-            user = User.objects.get(username = uid)
             #DB에 저장된 email이 uid와 일치함
-            if(user.password == pw):
+            if(cipher.decrypt(user.password) == pw):
                 #DB에 저장된 email과 쌍을 이루는 password가 upw와 일치함                
                 past_token = Token.objects.get(user_id = user.id)
                 past_token.delete()
