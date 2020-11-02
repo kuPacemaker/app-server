@@ -5,6 +5,7 @@ from rest_framework.authtoken.models import Token
 from collections import OrderedDict
 from rest_framework.decorators import api_view
 from polls.QGAPI.QGAPI import qgapi
+from polls.AESCipher import AESCipher
 import json, uuid
 
 class considerQuestion():
@@ -77,6 +78,7 @@ class considerQuestion():
 
     @api_view(['POST'])
     def makeReservation(request):
+        cipher = AESCipher()
         token = request.data['token']
         unit_id = uuid.UUID(uuid.UUID(request.data['unit_id']).hex)
 #release_time = request.data['release_time']
@@ -137,7 +139,7 @@ class considerQuestion():
         channel_for_news = unit_for_news.channel
         bkd_for_news = UnitBKD.objects.get(unit = unit_for_news).bkd
         news_title = "NEW QUIZ IS OPENED"
-        news_body = channel_for_news.name+"/"+unit_for_news.name+", "+Host.objects.get(channel = channel_for_news).user.first_name+", "+channel_for_news.description
+        news_body = channel_for_news.name+"/"+unit_for_news.name+", "+cipher.decrypt(Host.objects.get(channel = channel_for_news).user.first_name)+", "+channel_for_news.description
         news = News.objects.create(ntype = "PAPER_RECEIVE", title = news_title, body = news_body, channel = channel_for_news, unit = unit_for_news)
         guests = Guest.objects.filter(channel = channel_for_news)
         for guest in guests:

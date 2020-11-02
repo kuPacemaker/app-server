@@ -6,6 +6,7 @@ from rest_framework.parsers import JSONParser
 from .ChoiceProblemGenerator.ChoiceProblemGenerator import choiceProblemGenerator
 from collections import OrderedDict
 from rest_framework.decorators import api_view
+from polls.AESCipher import AESCipher
 import requests, json, uuid
 
 
@@ -45,6 +46,7 @@ class qgapi():
 
     @api_view(['POST'])
     def generateQuestion(request):
+        cipher = AESCipher()
         token = request.data['token']
         unit_id = uuid.UUID(uuid.UUID(request.data['unit_id']).hex)
         user_token = Token.objects.filter(key = token)
@@ -81,7 +83,7 @@ class qgapi():
                     unit_for_news = Unit.objects.get(url_id = unit_id)
                     channel_for_news = unit_for_news.channel
                     news_title = "NEW QUESTIONS WERE RECEIVED"
-                    news_body = channel_for_news.name+"/"+unit_for_news.name+", "+Host.objects.get(channel = channel_for_news).user.first_name+", "+channel_for_news.description
+                    news_body = channel_for_news.name+"/"+unit_for_news.name+", "+cipher.decrypt(Host.objects.get(channel = channel_for_news).user.first_name)+", "+channel_for_news.description
                     exist_news = News.objects.filter(ntype = "QUESTION_GENERATION", unit = unit_for_news)
                     if(exist_news):
                         for i in range(exist_news.count()):

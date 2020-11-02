@@ -20,6 +20,7 @@ class accountManager():
         for i in range(user_list.count()):
             if(cipher.decrypt(user_list[i].username) == uid):
                 user = user_list[i]
+                break
         data = OrderedDict()
         if(user):
             #DB에 저장된 email이 uid와 일치함
@@ -52,10 +53,15 @@ class accountManager():
     @api_view(['POST'])
     def signUp(request):
         cipher = AESCipher()
-        uid = cipher.encrypt(request.data['id'])
+        uid = request.data['id']
         name = cipher.encrypt(request.data['name'])
         pw = cipher.encrypt(request.data['pw'])
-        user = User.objects.filter(username = uid)
+        user = None
+        user_list = User.objects.all()
+        for i in range(user_list.count()):
+            if(cipher.decrypt(user_list[i].username) == uid):
+                user = user_list[i]
+                break
         data = OrderedDict()
         if(user):
             #DB에 uid가 이미 존재함
@@ -63,7 +69,7 @@ class accountManager():
             data["message"] = "ID is already exist."
         else:        
             #존재하지 않으므로 사용 가능함
-            user = User.objects.create(username = uid, password = pw, first_name = name)
+            user = User.objects.create(username = cipher.encrypt(uid), password = pw, first_name = name)
             data["state"] = "success"
             data["message"] = "Sign up completed."
 
@@ -74,12 +80,16 @@ class accountManager():
     @api_view(['POST'])
     def findAccount(request):
         cipher = AESCipher()
-        uid = cipher.encrypt(request.data['id'])
+        uid = request.data['id']
         #user의 first_name도 같이 포함해서 찾아야 함
-        user = User.objects.filter(username = uid)
+        user = None
+        user_list = User.objects.all()
+        for i in range(user_list.count()):
+            if(cipher.decrypt(user_list[i].username) == uid):
+                user = user_list[i]
+                break
         data = OrderedDict()
         if(user):
-            user= User.objects.get(username = uid)
             new_password = emailSender.sendEmail(uid) #반환값을 DB에 저장할 목적
             user.password = cipher.encrypt(new_password)
             user.save()
@@ -98,21 +108,26 @@ class accountManager():
     def modifyAccount(request):
         cipher = AESCipher()
         token = request.data['token']
-        uid = cipher.encrypt(request.data['id'])
-        name = cipher.encrypt(request.data['name'])
-        pw = cipher.encrypt(request.data['pw'])
-        pw_new = cipher.encrypt(request.data['pw_new'])
+        uid = request.data['id']
+        name = request.data['name']
+        pw = request.data['pw']
+        pw_new = request.data['pw_new']
         user_token = Token.objects.filter(key = token)
         data = OrderedDict()
         if(user_token):
-            user = User.objects.filter(username=uid)
+            user_list = User.objects.all()
+            user = None
+            for i in range(user_list.count()):
+                if(cipher.decrypt(user_list[i].username) == uid):
+                    user = user_list[i]
+                    break
             if(user):
-                if(user[0].password == pw):
+                if(cipher.decrypt(user.password) == pw):
                     if(name != ""):
-                        user[0].first_name = name
+                        user.first_name = cipher.encrypt(name)
                     if(pw_new != ""):
-                        user[0].password = pw_new
-                    user[0].save()
+                        user.password = cipher.encrypt(pw_new)
+                    user.save()
                     data["state"] = "success"
                     data["message"] = "Save completed."
                 else:

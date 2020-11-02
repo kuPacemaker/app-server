@@ -3,6 +3,7 @@ import string, random
 
 class emailSender():
     def sendEmail(uid):
+        cipher = AESCipher()
         title = 'Reset for PACEMAKER\'s password.' #메일 제목
         content = 'Hello! We are PACEMAKER11\nThis mail is to reset your password!!\n\n\n\nYour new password : '#메일 기본 내용
         length = 10 #길이 10 임의지정

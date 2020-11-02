@@ -4,6 +4,7 @@ from polls.serializers import *
 from polls.QGAPI.QGAPI import qgapi
 from collections import OrderedDict
 from rest_framework.decorators import api_view
+from polls.AESCipher import AESCipher
 import json, uuid
 import random
 
@@ -83,6 +84,7 @@ class testPaperCollector():
 
     @api_view(['POST'])
     def submitPaper(request): #pairs = [{"id", "user_answer"}] testpair's id, user_answer
+        cipher = AESCipher()
         token = request.data['token']
         unit_id = request.data['unit_id']
         pairs = request.data['pairs']
@@ -116,7 +118,7 @@ class testPaperCollector():
             json.dumps(data, ensure_ascii=False, indent="\t")
             return JsonResponse(data, safe=False)
 
-        user = User.objects.get(id = Token.objects.get(key = token).user_id)
+        user = User.objects.get(id = user_token[0]user_id)
         test = UnitTest.objects.get(unit = unit[0]).test
         testset = TestSet.objects.get(user = user, test = test)
         testset.submitted = True
@@ -139,7 +141,7 @@ class testPaperCollector():
                 unit_for_news = Unit.objects.get(url_id = unit_id)
                 channel_for_news = unit_for_news.channel
                 news_title = "EVERYONE FINISHED THE QUIZ"
-                news_body = channel_for_news.name+"/"+unit_for_news.name+", "+Host.objects.get(channel = channel_for_news).user.first_name+", "+channel_for_news.description
+                news_body = channel_for_news.name+"/"+unit_for_news.name+", "+cipher.decrypt(Host.objects.get(channel = channel_for_news).user.first_name)+", "+channel_for_news.description
                 news = News.objects.create(ntype = "PAPER_FINISH", title = news_title, body = news_body, channel = channel_for_news, unit = unit_for_news)
                 hosts = Host.objects.filter(channel = channel_for_news)
                 for host in hosts:
