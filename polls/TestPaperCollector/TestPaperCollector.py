@@ -118,7 +118,7 @@ class testPaperCollector():
             json.dumps(data, ensure_ascii=False, indent="\t")
             return JsonResponse(data, safe=False)
 
-        user = User.objects.get(id = user_token[0]user_id)
+        user = User.objects.get(id = user_token[0].user_id)
         test = UnitTest.objects.get(unit = unit[0]).test
         testset = TestSet.objects.get(user = user, test = test)
         testset.submitted = True
