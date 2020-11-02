@@ -79,7 +79,10 @@ WSGI_APPLICATION = 'mysite.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/1.11/ref/settings/#databases
-
+import json
+with open('mysite/secret.json','r',encoding='utf-8') as secret:
+    DATABASES = json.load(secret)['DATABASES']
+'''
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
@@ -90,7 +93,7 @@ DATABASES = {
         'PORT': '3306',
     }
 }
-
+'''
 CORS_ORIGIN_ALLOW_ALL = False
 CORS_ORIGIN_WHITELIST = [
     'https://google.com',
