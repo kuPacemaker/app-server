@@ -33,7 +33,7 @@ class accountManager():
 
                 data["state"] = "success"
                 data["id"] = cipher.decrypt(user.username)
-                data["name"] = cpher.decrypt(user.first_name)
+                data["name"] = cipher.decrypt(user.first_name)
                 data["type"] = "Standard"
                 data["token"] = serializer.data[0]['key']
             else:
