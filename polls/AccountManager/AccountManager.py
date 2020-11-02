@@ -6,13 +6,15 @@ from .EmailSender.EmailSender import emailSender
 from polls.serializers import *
 from rest_framework.decorators import api_view
 from collections import OrderedDict
+from polls.AESCipher import AESCipher
 import json
 
 class accountManager():
     @api_view(['POST'])
     def signIn(request):
-        uid = request.data['id']
-        pw = request.data['pw']
+        cipher = AESCipher()
+        uid = cipher.encrypt(request.data['id'])
+        pw = cipher.encrypt(request.data['pw'])
         user = User.objects.filter(username = uid)
         data = OrderedDict()
         if(user):
@@ -27,8 +29,8 @@ class accountManager():
                 serializer = TokenSerializer(token, many=True)
 
                 data["state"] = "success"
-                data["id"] = user.username
-                data["name"] = user.first_name
+                data["id"] = cipher.decrypt(user.username)
+                data["name"] = cpher.decrypt(user.first_name)
                 data["type"] = "Standard"
                 data["token"] = serializer.data[0]['key']
             else:
@@ -46,14 +48,14 @@ class accountManager():
 
     @api_view(['POST'])
     def signUp(request):
-        uid = request.data['id']
-        name = request.data['name']
-        pw = request.data['pw']
+        cipher = AESCipher()
+        uid = cipher.encrypt(request.data['id'])
+        name = cipher.encrypt(request.data['name'])
+        pw = cipher.encrypt(request.data['pw'])
         user = User.objects.filter(username = uid)
         data = OrderedDict()
         if(user):
             #DB에 uid가 이미 존재함
-            print("EMAIL EXIST")
             data["state"] = "fail"
             data["message"] = "ID is already exist."
         else:        
@@ -68,14 +70,15 @@ class accountManager():
 
     @api_view(['POST'])
     def findAccount(request):
-        uid = request.data['id']
+        cipher = AESCipher()
+        uid = cipher.encrypt(request.data['id'])
         #user의 first_name도 같이 포함해서 찾아야 함
         user = User.objects.filter(username = uid)
         data = OrderedDict()
         if(user):
             user= User.objects.get(username = uid)
             new_password = emailSender.sendEmail(uid) #반환값을 DB에 저장할 목적
-            user.password = new_password
+            user.password = cipher.encrypt(new_password)
             user.save()
             data["state"] = "success"
             data["message"] = "E-Mail sended."
@@ -90,11 +93,12 @@ class accountManager():
 
     @api_view(['POST']) 
     def modifyAccount(request):
+        cipher = AESCipher()
         token = request.data['token']
-        uid = request.data['id']
-        name = request.data['name']
-        pw = request.data['pw']
-        pw_new = request.data['pw_new']
+        uid = cipher.encrypt(request.data['id'])
+        name = cipher.encrypt(request.data['name'])
+        pw = cipher.encrypt(request.data['pw'])
+        pw_new = cipher.encrypt(request.data['pw_new'])
         user_token = Token.objects.filter(key = token)
         data = OrderedDict()
         if(user_token):

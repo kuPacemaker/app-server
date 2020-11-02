@@ -4,11 +4,13 @@ from polls.models import *
 from polls.serializers import *
 from collections import OrderedDict
 from rest_framework.decorators import api_view
+from polls.AESCipher import AESCipher
 import json, uuid
 
 class hostChannel():
     @api_view(['POST'])
     def createUnit(request):
+        cipher = AESCipher()
         token = request.data['token']
         channel_id = uuid.UUID(uuid.UUID(request.data['channel_id']).hex)
 #index = request.data['index']
@@ -32,7 +34,7 @@ class hostChannel():
                 data["id"] = channel_serializer.data[0]['url_id']
                 data["title"] = channel_serializer.data[0]['name']
                 data["detail"] = channel_serializer.data[0]['description']
-                data["leader"] = user[0].first_name
+                data["leader"] = cipher.decrypt(user[0].first_name)
                 data["code"] = channel_serializer.data[0]['accesspath']
                 data["image"] = channel_serializer.data[0]['image_type']
                 data["units"] = [0 for i in range(unit_length)]
@@ -64,7 +66,7 @@ class hostChannel():
                 if(guest_length != 0):
                     data["runners"] = [0 for i in range(guest_length)]
                     for i in range(guest_length):
-                        data["runners"][i] = guest[i].user.first_name
+                        data["runners"][i] = cipher.decrypt(guest[i].user.first_name)
                 else:
                      data["runners"] = []
 
@@ -83,6 +85,7 @@ class hostChannel():
 
     @api_view(['POST'])
     def editUnit(request):
+        cipher = AESCipher()
         token = request.data['token']
         unit_id = uuid.UUID(uuid.UUID(request.data['unit_id']).hex)
 #index = request.data['index']
@@ -111,7 +114,7 @@ class hostChannel():
                     data["detail"] = channel_serializer.data[0]['description']
                     data["code"] = channel_serializer.data[0]['accesspath']
                     data["image"] = channel_serializer.data[0]['image_type']
-                    data["leader"] = Host.objects.get(channel = channel[0]).user.first_name
+                    data["leader"] = cipher.decrypt(Host.objects.get(channel = channel[0]).user.first_name)
 
                     unit = Unit.objects.filter(channel = channel[0]).order_by('index')
                     unit_serializer = UnitSerializer(unit, many=True)
@@ -143,7 +146,7 @@ class hostChannel():
                     if(guest_length != 0):
                         data["runners"] = [0 for i in range(guest_length)]
                         for i in range(guest_length):
-                            data["runners"][i] = guest[i].user.first_name
+                            data["runners"][i] = cipher.decrypt(guest[i].user.first_name)
                     else:
                          data["runners"] = []
                 else:
@@ -162,6 +165,7 @@ class hostChannel():
 
     @api_view(['POST'])
     def deleteUnit(request):
+        cipher = AESCipher()
         token = request.data['token']
         unit_id = uuid.UUID(uuid.UUID(request.data['unit_id']).hex)
         user_token = Token.objects.filter(key = token)
@@ -197,7 +201,7 @@ class hostChannel():
                     data["detail"] = channel_serializer.data[0]['description']
                     data["code"] = channel_serializer.data[0]['accesspath']
                     data["image"] = channel_serializer.data[0]['image_type']
-                    data["leader"] = Host.objects.get(channel = channel[0]).user.first_name
+                    data["leader"] = cipher.decrypt(Host.objects.get(channel = channel[0]).user.first_name)
 
                     unit = Unit.objects.filter(channel = channel[0]).order_by('index')
                     if(unit.count() != 0):
@@ -232,7 +236,7 @@ class hostChannel():
                     if(guest_length != 0):
                         data["runners"] = [0 for i in range(guest_length)]
                         for i in range(guest_length):
-                            data["runners"][i] = guest[i].user.first_name
+                            data["runners"][i] = cipher.decrypt(guest[i].user.first_name)
                     else:
                          data["runners"] = []
 

@@ -6,6 +6,7 @@ from polls.QGAPI.QGAPI import qgapi
 from .HostChannel.ChannelJoinCodeGenerator.ChannelJoinCodeGenerator import channelJoinCodeGenerator
 from collections import OrderedDict
 from rest_framework.decorators import api_view
+from polls.AESCipher import AESCipher
 import json
 
 class channelManager():
@@ -230,6 +231,7 @@ class channelManager():
 
     @api_view(['POST'])
     def requestChannel(request):
+        cipher = AESCipher()
         token = request.data['token']
         channel_id = uuid.UUID(uuid.UUID(request.data['channel_id']).hex)
         user_token = Token.objects.filter(key = token)
@@ -247,14 +249,13 @@ class channelManager():
                 data["detail"] = channel[0].description
                 data["code"] = channel[0].accesspath
                 data["image"] = channel[0].image_type
-                data["leader"] = Host.objects.get(channel = channel[0]).user.first_name
-
+                data["leader"] = cipher.decrypt(Host.objects.get(channel = channel[0]).user.first_name)
                 guest = Guest.objects.filter(channel = channel[0])
                 guest_length = len(guest)
                 if(guest_length != 0):
                     data["runners"] = [0 for i in range(guest_length)]
                     for i in range(guest_length):
-                        data["runners"][i] = guest[i].user.first_name
+                        data["runners"][i] = cipher.decrypt(guest[i].user.first_name)
                 else:
                      data["runners"] = []
                 unit = Unit.objects.filter(channel = channel[0]).order_by('index')
