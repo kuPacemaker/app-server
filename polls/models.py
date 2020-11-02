@@ -29,7 +29,8 @@ class Question(models.Model):
 
 class User(AbstractUser):
     url_id = models.UUIDField(unique=True, default=uuid.uuid4, editable=False)
-    username = models.CharField(unique=True, default='', max_length=30)
+    username = models.CharField(unique=True, default='', max_length=128)
+    first_name = modles.CharField(unique=True, default='', max_length=128)
 
     @receiver(post_save, sender = settings.AUTH_USER_MODEL)
     def create_auth_token(sender, instance=None, created=False, **kwargs):
