@@ -10,7 +10,10 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/1.11/ref/settings/
 """
 
-import os
+import os, json
+
+with open('mysite/secret.json','r',encoding='utf-8') as secret:
+    SECRET = json.load(secret)
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -20,7 +23,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/1.11/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'cn_q5@^=v-qo&4p2yjx7q8c*f67f-oqew4aobimqedx+_s--+6'
+SECRET_KEY = SECRET['SECRET_KEY']
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -79,9 +82,7 @@ WSGI_APPLICATION = 'mysite.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/1.11/ref/settings/#databases
-import json
-with open('mysite/secret.json','r',encoding='utf-8') as secret:
-    DATABASES = json.load(secret)['DATABASES']
+DATABASES = SECRET['DATABASES']
 
 CORS_ORIGIN_ALLOW_ALL = False
 CORS_ORIGIN_WHITELIST = [
@@ -129,12 +130,12 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_PORT = '587'
-EMAIL_HOST_USER = 'ku.pacemaker@gmail.com'
-EMAIL_HOST_PASSWORD = '!Q@W#E$R%T'
-EMAIL_USE_TLS = True
-DEAULT_FROM_EMAIL = 'ku.pacemaker@gmail.com'
+EMAIL_HOST = SECRET['EMAIL_HOST']
+EMAIL_PORT = sECRET['EMAIL_PORT']
+EMAIL_HOST_USER = SECRET['EMAIL_HOST_USER']
+EMAIL_HOST_PASSWORD = SECRET['EMAIL_HOST_PASSWORD']
+EMAIL_USE_TLS = SECRET['EMAIL_USE_TLS']
+DEFAULT_FROM_EMAIL = SECRET['DEFAULT_FROM_EMAIL']
 
 BROKER_URL = 'redis://localhost:6379/0'
 CELERY_RESULT_BAKCEND = 'redis://localhost:6379/0'
