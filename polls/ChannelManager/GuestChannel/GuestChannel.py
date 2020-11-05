@@ -129,9 +129,9 @@ class guestChannel():
             serializer = ChannelIDSerializer(host_channel, many=True)
             data["leader"][i] = OrderedDict()
             data["leader"][i]["id"] = serializer.data[0]['url_id']
-            data["leader"][i]["title"] = host_channel[i].name
-            data["leader"][i]["detail"] = host_channel[i].description
-            data["leader"][i]["image"] = host_channel[i].image_type
+            data["leader"][i]["title"] = host_channel_list[i].name
+            data["leader"][i]["detail"] = host_channel_list[i].description
+            data["leader"][i]["image"] = host_channel_list[i].image_type
 
         data["runner"] = [0 for i in range(guest_length)]
         for i in range(guest_length):
@@ -139,9 +139,9 @@ class guestChannel():
             serializer = ChannelIDSerializer(guest_channel, many=True)
             data["runner"][i] = OrderedDict()
             data["runner"][i]["id"] = serializer.data[0]['url_id']
-            data["runner"][i]["title"] = guest_channel[i].name
-            data["runner"][i]["detail"] = guest_channel[i].description
-            data["runner"][i]["image"] = guest_channel[i].image_type
+            data["runner"][i]["title"] = guest_channel_list[i].name
+            data["runner"][i]["detail"] = guest_channel_list[i].description
+            data["runner"][i]["image"] = guest_channel_list[i].image_type
 
         json.dumps(data, ensure_ascii=False, indent="\t")
 
