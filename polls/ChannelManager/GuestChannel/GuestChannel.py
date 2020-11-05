@@ -128,7 +128,7 @@ class guestChannel():
             host_channel = Channel.objects.filter(id=host_channel_list[i].id)
             serializer = ChannelIDSerializer(host_channel, many=True)
             data["leader"][i] = OrderedDict()
-            data["leader"][i]["id"] = serializer.data[i]['url_id']
+            data["leader"][i]["id"] = serializer.data[0]['url_id']
             data["leader"][i]["title"] = host_channel[i].name
             data["leader"][i]["detail"] = host_channel[i].description
             data["leader"][i]["image"] = host_channel[i].image_type
@@ -138,7 +138,7 @@ class guestChannel():
             guest_channel = Channel.objects.filter(id=guest_channel_list[i].id)
             serializer = ChannelIDSerializer(guest_channel, many=True)
             data["runner"][i] = OrderedDict()
-            data["runner"][i]["id"] = serializer.data[i]['url_id']
+            data["runner"][i]["id"] = serializer.data[0]['url_id']
             data["runner"][i]["title"] = guest_channel[i].name
             data["runner"][i]["detail"] = guest_channel[i].description
             data["runner"][i]["image"] = guest_channel[i].image_type
