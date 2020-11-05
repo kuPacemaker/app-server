@@ -17,7 +17,7 @@ class channelManager():
             host_channel_id_list = []
             user_token = Token.objects.get(key = token)
             user = User.objects.get(id=user_token.user_id)
-            host = Host.objects.filter(user=user)
+            host = Host.objects.filter(user=user).order_by('id')
             if(host):
                 serializer = HostSerializer(host, many=True)
                 length = len(serializer.data)
@@ -33,7 +33,7 @@ class channelManager():
             guest_channel_id_list = []
             user_token = Token.objects.get(key = token)
             user = User.objects.get(id = user_token.user_id)
-            guest = Guest.objects.filter(user = user)
+            guest = Guest.objects.filter(user = user).order_by('id')
             if(guest):
                 serializer = GuestSerializer(guest, many=True)
                 length = len(serializer.data)
@@ -55,13 +55,17 @@ class channelManager():
             user_token = Token.objects.get(key = token)
             user = User.objects.get(id = user_token.user_id)
             channel_join_code = channelJoinCodeGenerator.channelJoinCodeGenerate()
+            new_channel = Channel.objects.create(name=channel_name, description=channel_desc, accesspath=channel_join_code, image_type = image)
+            Host.objects.create(channel = new_channel, user = user)
+            Guest.objects.create(channel = new_channel, user = user)
+
             host_channel_list = channelManager.requestHostChannelList(token)
             guest_channel_list = channelManager.requestGuestChannelList(token)
             host_length = len(host_channel_list)
             guest_length = len(guest_channel_list)
         
             data["state"] = "success"
-            data["leader"] = [0 for i in range(host_length+1)]
+            data["leader"] = [0 for i in range(host_length)]
             for i in range(host_length):
                 #기존의 host channel list
                 host_channel = Channel.objects.filter(id=host_channel_list[i].id)
@@ -72,19 +76,7 @@ class channelManager():
                 data["leader"][i]["detail"] = host_channel_list[i].description
                 data["leader"][i]["image"] = host_channel_list[i].image_type
                
-            new_channel = Channel.objects.create(name=channel_name, description=channel_desc, accesspath=channel_join_code, image_type = image)
-            Host.objects.create(channel = new_channel, user = user)
-            Guest.objects.create(channel = new_channel, user = user)
-            channel = Channel.objects.filter(id=new_channel.id)
-            new_channel_serializer = ChannelInfoSerializer(channel,many=True)
-            #새로 생성한 host channel list
-            data["leader"][host_length] = OrderedDict()
-            data["leader"][host_length]["id"] = new_channel_serializer.data[0]['url_id']
-            data["leader"][host_length]["title"] = new_channel_serializer.data[0]['name']
-            data["leader"][host_length]["detail"] = new_channel_serializer.data[0]['description']
-            data["leader"][host_length]["image"] = new_channel_serializer.data[0]['image_type']
-
-            data["runner"] = [0 for i in range(guest_length+1)]
+            data["runner"] = [0 for i in range(guest_length)]
             for i in range(guest_length):
                 guest_channel = Channel.objects.filter(id=guest_channel_list[i].id)
                 serializer = ChannelIDSerializer(guest_channel,many=True)
@@ -94,14 +86,7 @@ class channelManager():
                 data["runner"][i]["title"] = guest_channel_list[i].name
                 data["runner"][i]["detail"] = guest_channel_list[i].description
                 data["runner"][i]["image"] = guest_channel_list[i].image_type
-            
-            #새로 생성한 guest channel list
-            data["runner"][guest_length] = OrderedDict()
-            data["runner"][guest_length]["id"] = new_channel_serializer.data[0]['url_id']
-            data["runner"][guest_length]["title"] = new_channel_serializer.data[0]['name']
-            data["runner"][guest_length]["detail"] = new_channel_serializer.data[0]['description']
-            data["runner"][guest_length]["image"] = new_channel_serializer.data[0]['image_type']
-
+        
         else:
             #token 미존재
             data["state"] = "fail"
@@ -423,29 +408,30 @@ class channelManager():
 
         user = User.objects.get(id = user_token[0].user_id)
 
-        hosts = Host.objects.filter(user = user)
-        host_channel = Channel.objects.filter(id__in = hosts.values_list('channel', flat=True))
-        host_length = host_channel.count()
-        serializer = ChannelInfoSerializer(host_channel, many=True)
+        host_channel_list = channelManager.requestHostChannelList(token)
+        guest_channel_list = channelManager.requestGuestChannelList(token)
+        host_length = len(host_channel_list)
+        guest_length = len(guest_channel_list)
+
         data["leader"] = [0 for i in range(host_length)]
         for i in range(host_length):
+            host_channel = Channel.objects.filter(id=host_channel_list[i].id)
+            serializer = ChannelIDSerializer(host_channel, many=True)
             data["leader"][i] = OrderedDict()
             data["leader"][i]["id"] = serializer.data[i]['url_id']
-            data["leader"][i]["title"] = serializer.data[i]['name']
-            data["leader"][i]["detail"] = serializer.data[i]['description']
-            data["leader"][i]["image"] = serializer.data[i]['image_type']
+            data["leader"][i]["title"] = host_channel_list[i].name
+            data["leader"][i]["detail"] = host_channel_list[i].description
+            data["leader"][i]["image"] = host_channel_list[i].image_type
 
-        guests = Guest.objects.filter(user = user)
-        guest_channel = Channel.objects.filter(id__in = guests.values_list('channel', flat=True))
-        guest_length = guest_channel.count()
-        serializer = ChannelInfoSerializer(guest_channel, many=True)
         data["runner"] = [0 for i in range(guest_length)]
         for i in range(guest_length):
+            guest_channel = Channel.objects.filter(id=guest_channel_list[i].id)
+            serializer = ChannelIDSerializer(guest_channel, many=True)
             data["runner"][i] = OrderedDict()
             data["runner"][i]["id"] = serializer.data[i]['url_id']
-            data["runner"][i]["title"] = serializer.data[i]['name']
-            data["runner"][i]["detail"] = serializer.data[i]['description']
-            data["runner"][i]["image"] = serializer.data[i]['image_type']
+            data["runner"][i]["title"] = guest_channel_list[i].name
+            data["runner"][i]["detail"] = guest_channel_list[i].description
+            data["runner"][i]["image"] = guest_channel_list[i].image_type
 
         json.dumps(data, ensure_ascii=False, indent="\t")
 

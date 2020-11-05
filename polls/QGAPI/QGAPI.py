@@ -62,6 +62,7 @@ class qgapi():
                     unitqa = UnitQA.objects.filter(unit = unit[0])
                     if(unitqa.exists()):
                         unitqa[0].qaset.delete()
+                        News.objects.filter(unit = unit[0]).delete()
 
                     unit_bkd = UnitBKD.objects.get(unit = unit[0])
                     bkd = BKD.objects.get(id = unit_bkd.bkd.id)

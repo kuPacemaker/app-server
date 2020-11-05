@@ -111,27 +111,32 @@ class guestChannel():
         tests = TestPlan.objects.filter(id__in = unittests.values_list('test', flat=True))
         testsets = TestSet.objects.filter(user = user, test__in = tests)
         testsets.delete()
+
+        #feed 삭제 부분
+        newses = News.objects.filter(channel = channel[0])
+        UserNews.objects.filter(news__in = newses, user = user).delete()
         
         data["state"] = "success"
-        
-        hosts = Host.objects.filter(user = user)
-        host_channel = Channel.objects.filter(id__in = hosts.values_list('channel', flat=True))
-        hostId_serializer = ChannelIDSerializer(host_channel, many=True)
-        host_length = host_channel.count()
+
+        host_channel_list = channelManager.requestHostChannelList(token)
+        guest_channel_list = channelManager.requestGuestChannelList(token)
+        host_length = len(host_channel_list)
+        guest_length = len(guest_channel_list)
+
         data["leader"] = [0 for i in range(host_length)]
         for i in range(host_length):
+            host_channel = Channel.objects.filter(id=host_channel_list[i].id)
+            serializer = ChannelIDSerializer(host_channel, many=True)
             data["leader"][i] = OrderedDict()
             data["leader"][i]["id"] = hostId_serializer.data[i]['url_id']
             data["leader"][i]["title"] = host_channel[i].name
             data["leader"][i]["detail"] = host_channel[i].description
             data["leader"][i]["image"] = host_channel[i].image_type
 
-        guests = Guest.objects.filter(user = user)
-        guest_channel = Channel.objects.filter(id__in = guests.values_list('channel', flat=True))
-        guestId_serializer = ChannelIDSerializer(guest_channel, many=True)
-        guest_length = guest_channel.count()
         data["runner"] = [0 for i in range(guest_length)]
         for i in range(guest_length):
+            guest_channel = Channel.objects.filter(id=guest_channel_list[i].id)
+            serializer = ChannelIDSerializer(guest_channel, many=True)
             data["runner"][i] = OrderedDict()
             data["runner"][i]["id"] = guestId_serializer.data[i]['url_id']
             data["runner"][i]["title"] = guest_channel[i].name

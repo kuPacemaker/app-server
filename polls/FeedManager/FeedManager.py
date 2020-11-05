@@ -49,7 +49,7 @@ class feedManager():
             data["board"]["newsfeed"][i]["arg"]["unit_id"] = uid_serializer.data[0]['url_id']
 
         hosts = Host.objects.filter(user = user)
-        host_channel = Channel.objects.filter(id__in = hosts.values_list('channel', flat=True))
+        host_channel = Channel.objects.filter(id__in = hosts.values_list('channel', flat=True)).order_by('id')
         host_length = host_channel.count()
         serializer = ChannelInfoSerializer(host_channel, many=True)
         data["board"]["leader"] = [0 for i in range(host_length)]
@@ -61,7 +61,7 @@ class feedManager():
             data["board"]["leader"][i]["image"] = serializer.data[i]['image_type']
 
         guests = Guest.objects.filter(user = user)
-        guest_channel = Channel.objects.filter(id__in = guests.values_list('channel', flat=True))
+        guest_channel = Channel.objects.filter(id__in = guests.values_list('channel', flat=True)).order_by('id')
         guest_length = guest_channel.count()
         serializer = ChannelInfoSerializer(guest_channel, many=True)
         data["board"]["runner"] = [0 for i in range(guest_length)]

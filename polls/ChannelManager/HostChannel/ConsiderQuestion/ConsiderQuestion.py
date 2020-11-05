@@ -147,6 +147,84 @@ class considerQuestion():
 
         data["state"] = "success"
         data["message"] = "Reservation saved"
+        
+        user = User.objects.get(id = user_token[0].user_id)
+        unit = Unit.objects.filter(url_id = unit_id)
+        channel = Channel.objects.filter(id = unit[0].channel.id)
+
+        serializer = ChannelInfoSerializer(channel, many=True)
+        data["channel"] = OrderedDict()
+        data["channel"]["id"] = serializer.data[0]['url_id']
+        data["channel"]["title"] = serializer.data[0]['name']
+        data["channel"]["detail"] = serializer.data[0]['description']
+        data["channel"]["code"] = serializer.data[0]['accesspath']
+
+        serializer = UnitSerializer(unit, many=True)
+        data["unit"] = OrderedDict()
+        data["unit"]["id"] = serializer.data[0]['url_id']
+        data["unit"]["index"] = serializer.data[0]['index']
+        data["unit"]["title"] = serializer.data[0]['name']
+        data["unit"]["isOpened"] = True
+
+        unit_bkd = UnitBKD.objects.filter(unit = unit[0])
+        data["unit"]["document"] = OrderedDict()
+        if (unit_bkd):
+            bkd = BKD.objects.filter(id = unit_bkd[0].bkd.id)
+            serializer = BKDSerializer(bkd, many=True)
+            data["unit"]["document"]["id"] = serializer.data[0]['url_id']
+            data["unit"]["document"]["visible"] = unit_bkd[0].opened
+            data["unit"]["document"]["title"] = bkd[0].title
+            data["unit"]["document"]["body"] = bkd[0].body
+        else:
+            data["unit"]["document"]["id"] = None
+            data["unit"]["document"]["visible"] = False
+            data["unit"]["document"]["title"] = ""
+            data["unit"]["document"]["body"] = ""
+
+        data["paper"] = OrderedDict()
+        if (UnitQA.objects.filter(unit = unit[0]).exists()):
+            qaset = UnitQA.objects.get(unit = unit[0]).qaset
+
+            test = UnitTest.objects.filter(unit = unit[0])
+            if (test.exists()):
+                isStart = test[0].test.released
+                testset = TestSet.objects.filter(user = user, test = test[0].test)
+                if(testset.exists()):
+                    isEnd = testset[0].submitted
+                else:
+                    isEnd = False
+            else:
+                isStart = False
+                isEnd = False
+
+            data["paper"]["isStart"] = isStart
+            data["paper"]["isEnd"] = isEnd
+            
+            qapairs = QAPair.objects.filter(qaset = qaset)
+            qapair_length = qapairs.count()
+            serializer = QAPairSerializer(qapairs, many=True)
+            if(qapair_length != 0):
+                data["paper"]["questions"] = [0 for i in range(qapair_length)]
+                for i in range(qapair_length):
+                    data["paper"]["questions"][i] = OrderedDict()
+                    data["paper"]["questions"][i]["id"] = serializer.data[i]['url_id']
+                    data["paper"]["questions"][i]["quiz"] = qapairs[i].question
+                    data["paper"]["questions"][i]["answer"] = qapairs[i].answer
+                    if(test.exists()):
+                        testplan = TestPlan.objects.get(qaset = qaset)
+                        testset = TestSet.objects.get(user = user, test = testplan)
+                        data["paper"]["questions"][i]["user_answer"] = TestPair.objects.get(tset = tes
+                    else:
+                        data["paper"]["questions"][i]["user_answer"] = ""
+                    data["paper"]["questions"][i]["answer_set"] = qapairs[i].answer_set
+                    data["paper"]["questions"][i]["verified"] = True
+            else:
+                 data["paper"]["questions"] = []
+
+        else:
+            data["paper"]["isStart"] = False
+            data["paper"]["isEnd"] = False
+            data["paper"]["questions"] = []
 
         json.dumps(data, ensure_ascii=False, indent="\t")
 
