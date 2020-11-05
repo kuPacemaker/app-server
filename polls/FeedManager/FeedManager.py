@@ -4,6 +4,7 @@ from polls.serializers import *
 from rest_framework.authtoken.models import Token
 from collections import OrderedDict
 from rest_framework.decorators import api_view
+from polls.ChannelManager.ChannelManager import channelManager
 import json, uuid
 
 #refresh에 필요
@@ -48,29 +49,30 @@ class feedManager():
             uid_serializer = UnitIDSerializer(news_unit, many=True)
             data["board"]["newsfeed"][i]["arg"]["unit_id"] = uid_serializer.data[0]['url_id']
 
-        hosts = Host.objects.filter(user = user)
-        host_channel = Channel.objects.filter(id__in = hosts.values_list('channel', flat=True)).order_by('id')
-        host_length = host_channel.count()
-        serializer = ChannelInfoSerializer(host_channel, many=True)
+        host_channel_list = channelManager.requestHostChannelList(token)
+        guest_channel_list = channelManager.requestGuestChannelList(token)
+        host_length = len(host_channel_list)
+        guest_length = len(guest_channel_list)
+
         data["board"]["leader"] = [0 for i in range(host_length)]
         for i in range(host_length):
+            host_channel = Channel.objects.filter(id=host_channel_llst[i].id)
+            serializer = ChannelIDSerializer(host_channel, many=True)
             data["board"]["leader"][i] = OrderedDict()
-            data["board"]["leader"][i]["id"] = serializer.data[i]['url_id']
-            data["board"]["leader"][i]["title"] = serializer.data[i]['name']
-            data["board"]["leader"][i]["detail"] = serializer.data[i]['description']
-            data["board"]["leader"][i]["image"] = serializer.data[i]['image_type']
+            data["board"]["leader"][i]["id"] = serializer.data[0]['url_id']
+            data["board"]["leader"][i]["title"] = host_channel_list[i].name
+            data["board"]["leader"][i]["detail"] = host_channel_list[i].description
+            data["board"]["leader"][i]["image"] = host_channel_list[i].image_type
 
-        guests = Guest.objects.filter(user = user)
-        guest_channel = Channel.objects.filter(id__in = guests.values_list('channel', flat=True)).order_by('id')
-        guest_length = guest_channel.count()
-        serializer = ChannelInfoSerializer(guest_channel, many=True)
         data["board"]["runner"] = [0 for i in range(guest_length)]
         for i in range(guest_length):
+            guest_channel = Channel.objects.filter(id=guest_channel_list[i].id)
+            serializer = ChannelIDSerializer(guest_channel, many=True)
             data["board"]["runner"][i] = OrderedDict()
-            data["board"]["runner"][i]["id"] = serializer.data[i]['url_id']
-            data["board"]["runner"][i]["title"] = serializer.data[i]['name']
-            data["board"]["runner"][i]["detail"] = serializer.data[i]['description']
-            data["board"]["runner"][i]["image"] = serializer.data[i]['image_type']
+            data["board"]["runner"][i]["id"] = serializer.data[0]['url_id']
+            data["board"]["runner"][i]["title"] = guest_channel_list[i].name
+            data["board"]["runner"][i]["detail"] = guest_channel_list[i].description
+            data["board"]["runner"][i]["image"] = guest_channel_list[i].image_type
 
         json.dumps(data, ensure_ascii=False, indent="\t")
 
