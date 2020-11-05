@@ -346,6 +346,8 @@ class channelManager():
             qaset = UnitQA.objects.get(unit = unit[0]).qaset
 
             test = UnitTest.objects.filter(unit = unit[0])
+
+            '''
             if (test.exists()):
                 isStart = test[0].test.released
                 testset = TestSet.objects.filter(user = user, test = test[0].test)
@@ -359,7 +361,40 @@ class channelManager():
             
             data["paper"]["isStart"] = isStart
             data["paper"]["isEnd"] = isEnd
+            '''
 
+            if(test.exists()):
+                isStart = test[0].test.released
+                tset = TestSet.objects.filter(user = user, test = test[0].test)
+                if(tset.exists()):
+                    isEnd = tset[0].submitted
+                else:
+                    isEnd = False
+                testpairs = TestPair.objects.filter(tset = tset[0])
+                testpair_length = testpairs.count()
+                if(testpair_length != 0):
+                    data["paper"]["questions"] = [0 for i in range(testpair_length)]
+                    for i in range(testpair_length):
+                        qapair = QAPair.objects.filter(qaset = qaset, index = testpair[i].pair.index)
+                        serializer = QAPairSerializer(qapair, many=True)
+                        data["paper"]["questions"][i] = OrderedDict()
+                        data["paper"]["questions"][i]["id"] = serializer.data[0]['url_id']#이부분 qapair의 url_id 어떻게 뽑아낼래?
+                        data["paper"]["questions"][i]["quiz"] = testpair[i].pair.question
+                        data["paper"]["questions"][i]["answer"] = testpair[i].pair.answer
+                        data["paper"]["questions"][i]["user_answer"] = testpair[i].user_answer
+                        data["paper"]["questions"][i]["answer_set"] = testpair[i].pair.answer_set
+                        data["paper"]["questions"][i]["verified"] = True
+                else:
+                    data["paper"]["questions"] = []
+            else:
+                isStart = False
+                isEnd = False
+                data["paper"]["questions"] = []
+            
+            data["paper"]["isStart"] = isStart
+            data["paper"]["isEnd"] = isEnd
+
+            '''
             qapairs = QAPair.objects.filter(qaset = qaset)
             qapair_length = qapairs.count()
             serializer = QAPairSerializer(qapairs, many=True)
@@ -380,6 +415,7 @@ class channelManager():
                     data["paper"]["questions"][i]["verified"] = True
             else:
                  data["paper"]["questions"] = []
+            '''
 
         else:
             data["paper"]["isStart"] = False
