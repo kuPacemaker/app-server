@@ -56,7 +56,7 @@ class feedManager():
 
         data["board"]["leader"] = [0 for i in range(host_length)]
         for i in range(host_length):
-            host_channel = Channel.objects.filter(id=host_channel_llst[i].id)
+            host_channel = Channel.objects.filter(id=host_channel_list[i].id)
             serializer = ChannelIDSerializer(host_channel, many=True)
             data["board"]["leader"][i] = OrderedDict()
             data["board"]["leader"][i]["id"] = serializer.data[0]['url_id']
