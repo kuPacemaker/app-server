@@ -402,14 +402,14 @@ class channelManager():
                     if(testpair_length != 0):
                         data["paper"]["questions"] = [0 for i in range(testpair_length)]
                         for i in range(testpair_length):
-                            qapair = QAPair.objects.filter(qaset = qaset, index = testpair[i].pair.index)
+                            qapair = QAPair.objects.filter(qaset = qaset, index = testpairs[i].pair.index)
                             serializer = QAPairSerializer(qapair, many=True)
                             data["paper"]["questions"][i] = OrderedDict()
                             data["paper"]["questions"][i]["id"] = serializer.data[0]['url_id']#이부분 qapair의 url_id 어떻게 뽑아낼래?
-                            data["paper"]["questions"][i]["quiz"] = testpair[i].pair.question
-                            data["paper"]["questions"][i]["answer"] = testpair[i].pair.answer
-                            data["paper"]["questions"][i]["user_answer"] = testpair[i].user_answer
-                            data["paper"]["questions"][i]["answer_set"] = testpair[i].pair.answer_set
+                            data["paper"]["questions"][i]["quiz"] = testpairs[i].pair.question
+                            data["paper"]["questions"][i]["answer"] = testpairs[i].pair.answer
+                            data["paper"]["questions"][i]["user_answer"] = testpairs[i].user_answer
+                            data["paper"]["questions"][i]["answer_set"] = testpairs[i].pair.answer_set
                             data["paper"]["questions"][i]["verified"] = True
                     else:
                         data["paper"]["questions"] = []
