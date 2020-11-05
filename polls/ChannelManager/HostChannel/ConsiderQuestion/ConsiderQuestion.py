@@ -33,7 +33,6 @@ class considerQuestion():
             data["state"] = "fail"
             data["message"] = "QASet is not exist"
         elif (TestPlan.objects.filter(qaset = qaset).exists()):
-            print("testplan is exist")
             data["state"] = "fail"
             data["message"] = "Cannot verify questions because reservation is already exist"
         else:
@@ -47,7 +46,6 @@ class considerQuestion():
             json.dumps(data, ensure_ascii=False, indent="\t")
             return JsonResponse(data, safe=False)
 
-        print("testplan is not exist")
         unit = Unit.objects.get(url_id = unit_id)
         qaset = UnitQA.objects.get(unit = unit).qaset
         for i in range(pair_id_length):
