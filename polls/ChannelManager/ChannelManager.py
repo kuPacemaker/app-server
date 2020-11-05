@@ -65,6 +65,7 @@ class channelManager():
             guest_length = len(guest_channel_list)
         
             data["state"] = "success"
+            data["message"] = "Channel is created"
             data["leader"] = [0 for i in range(host_length)]
             for i in range(host_length):
                 #기존의 host channel list
@@ -119,6 +120,7 @@ class channelManager():
                     channel.save()
 
                     data["state"] = "success"
+                    data["message"] = "Channel is edited"
                     channel = Channel.objects.filter(url_id = channel_id)
                     serializer = ChannelIDSerializer(channel, many=True)
                     data["id"] = serializer.data[0]['url_id']
@@ -170,7 +172,7 @@ class channelManager():
                             unit_bkd[j].bkd.delete()
                     channel[0].delete()
                     data["state"] = "success"
-                    
+                    data["message"] = "Channel is deleted"
                     user = User.objects.get(id = user_token[0].user_id)
                     host_channel_list = channelManager.requestHostChannelList(token)
                     guest_channel_list = channelManager.requestGuestChannelList(token)
@@ -228,6 +230,7 @@ class channelManager():
             if(channel):
                 #channel 존재
                 data["state"] = "success"
+                data["message"] = "Request channel is success"
                 serializer = ChannelIDSerializer(channel, many=True)
                 data["id"] = serializer.data[0]['url_id']
                 data["title"] = channel[0].name
@@ -313,6 +316,7 @@ class channelManager():
         channel = Channel.objects.filter(id = unit[0].channel.id)
 
         data["state"] = "success"
+        data["message"] = "Request unit success"
         serializer = ChannelInfoSerializer(channel, many=True)
         data["channel"] = OrderedDict()
         data["channel"]["id"] = serializer.data[0]['url_id']
@@ -385,10 +389,6 @@ class channelManager():
                 else:
                     data["paper"]["questions"] = []
             
-            
-            
-            
-            
             if(user_type == "runner"):
                 if(test.exists()):
                     isStart = test[0].test.released
@@ -445,7 +445,7 @@ class channelManager():
             return JsonResponse(data, safe=False)
 
         data["state"] = "success"
-
+        data["message"] = "Request board success"
         user = User.objects.get(id = user_token[0].user_id)
 
         host_channel_list = channelManager.requestHostChannelList(token)

@@ -20,6 +20,7 @@ class bkdManager():
                 bkd = BKD.objects.filter(id=unit_bkd.bkd.id)
                 serializer = BKDIDSerializer(bkd,many=True)
                 data["state"] = "success"
+                data["message"] = "Request BKD success"
                 data["id"] = serializer.data[0]['url_id']
                 data["visible"] = unit_bkd.opened
                 data["title"] = bkd[0].title
@@ -53,6 +54,7 @@ class bkdManager():
                     bkd = BKD.objects.filter(id = bkd.id)
                     serializer = BKDIDSerializer(bkd,many=True)
                     data["state"] = "success"
+                    data["message"] = "BKD is created"
                     data["id"] = serializer.data[0]['url_id']
                     data["visible"] = unit_bkd.opened
                     data["title"] = bkd[0].title
@@ -96,6 +98,7 @@ class bkdManager():
                     bkd[0].save()
 
                     data["state"] = "success"
+                    data["message"] = "BKD is edited"
                     serializer = BKDIDSerializer(bkd,many=True)
                     data["id"] = serializer.data[0]['url_id']
                     data["visible"] = bkd[0].opened

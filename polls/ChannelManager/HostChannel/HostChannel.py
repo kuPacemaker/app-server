@@ -31,6 +31,7 @@ class hostChannel():
                 unit_length = len(unit_list)       
 
                 data["state"] = "success"
+                data["message"] = "Unit is created"
                 data["id"] = channel_serializer.data[0]['url_id']
                 data["title"] = channel_serializer.data[0]['name']
                 data["detail"] = channel_serializer.data[0]['description']
@@ -107,6 +108,7 @@ class hostChannel():
                     unit.save()
 
                     data["state"] = "success"
+                    data["message"] = "Unit is edited"
                     channel = Channel.objects.filter(id = unit.channel.id)
                     channel_serializer = ChannelInfoSerializer(channel, many=True)
                     data["id"] = channel_serializer.data[0]['url_id']
@@ -194,6 +196,7 @@ class hostChannel():
                         i = i+1
 
                     data["state"] = "success"
+                    data["message"] = "Unit is deleted"
                     channel = Channel.objects.filter(id = unit.channel.id)
                     channel_serializer = ChannelInfoSerializer(channel, many=True)
                     data["id"] = channel_serializer.data[0]['url_id']

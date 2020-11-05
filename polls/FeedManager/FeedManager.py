@@ -29,6 +29,7 @@ class feedManager():
         user = User.objects.get(id = user_token[0].user_id)
 
         data["state"] = "success"
+        data["message"] = "Refresh success"
         usernews = UserNews.objects.filter(user = user).values_list('news', flat=True)
         limit_date = date.today() - datetime.timedelta(days=30)
         news = News.objects.filter(id__in = usernews, created_at__gte = limit_date)

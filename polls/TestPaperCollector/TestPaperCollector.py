@@ -61,13 +61,8 @@ class testPaperCollector():
         testset.save()
 
         #data should be included
-        '''
-        each testpair:
-            testpair.url_id
-            testpair.qapair.question
-            testpair.qapair.answer_set
-        '''
         data["state"] = "success"
+        data["message"] = "Request paper success"
         data["questions"] = [0 for i in range(test.que_number)]
         testpair = TestPair.objects.filter(tset = testset)
         serializer = TestPairIDSerializer(testpair, many=True)

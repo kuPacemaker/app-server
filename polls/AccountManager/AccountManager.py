@@ -33,6 +33,7 @@ class accountManager():
                 serializer = TokenSerializer(token, many=True)
 
                 data["state"] = "success"
+                data["message"] = "Sign in completed"
                 data["id"] = cipher.decrypt(user.username)
                 data["name"] = cipher.decrypt(user.first_name)
                 data["type"] = "Standard"
@@ -71,7 +72,7 @@ class accountManager():
             #존재하지 않으므로 사용 가능함
             user = User.objects.create(username = cipher.encrypt(uid), password = pw, first_name = name)
             data["state"] = "success"
-            data["message"] = "Sign up completed."
+            data["message"] = "Sign up completed"
 
         json.dumps(data, ensure_ascii=False, indent="\t")
 

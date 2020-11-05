@@ -42,6 +42,7 @@ class guestChannel():
                         guest_length = len(guest_channel_list)
         
                         data["state"] = "success"
+                        data["message"] = "Enter the channel completed"
                         if(host_length != 0):
                             data["leader"] = [0 for i in range(host_length)]
                             for i in range(host_length):
@@ -117,6 +118,7 @@ class guestChannel():
         UserNews.objects.filter(news__in = newses, user = user).delete()
         
         data["state"] = "success"
+        data["message"] = "Exit the channel completed"
 
         host_channel_list = channelManager.requestHostChannelList(token)
         guest_channel_list = channelManager.requestGuestChannelList(token)
