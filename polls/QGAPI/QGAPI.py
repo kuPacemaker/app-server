@@ -104,6 +104,7 @@ class qgapi():
 
                     #여기서부터 json 형식의 파일을 만들기 위한 작업을 한다.
                     data["state"] = "success"
+                    data["message"] = "Questions are generated"
                     data["isStart"] = False
                     data["isEnd"] = False
                     data["questions"] = [0 for i in range(length)]
