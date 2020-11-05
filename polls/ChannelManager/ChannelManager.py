@@ -285,6 +285,7 @@ class channelManager():
     def requestUnit(request):
         token = request.data['token']
         unit_id = uuid.UUID(uuid.UUID(request.data['unit_id']).hex)
+        user_type = request.data['type']
         data = OrderedDict()
 
         user_token = Token.objects.filter(key = token)
@@ -347,75 +348,78 @@ class channelManager():
 
             test = UnitTest.objects.filter(unit = unit[0])
 
-            '''
-            if (test.exists()):
-                isStart = test[0].test.released
-                testset = TestSet.objects.filter(user = user, test = test[0].test)
-                if(testset.exists()):
-                    isEnd = testset[0].submitted
-                else:
-                    isEnd = False
-            else:
-                isStart = False
-                isEnd = False
             
-            data["paper"]["isStart"] = isStart
-            data["paper"]["isEnd"] = isEnd
-            '''
-
-            if(test.exists()):
-                isStart = test[0].test.released
-                tset = TestSet.objects.filter(user = user, test = test[0].test)
-                if(tset.exists()):
-                    isEnd = tset[0].submitted
+            if(user_type == "leader"):
+                if (test.exists()):
+                    isStart = test[0].test.released
+                    testset = TestSet.objects.filter(user = user, test = test[0].test)
+                    if(testset.exists()):
+                        isEnd = testset[0].submitted
+                    else:
+                        isEnd = False
                 else:
+                    isStart = False
                     isEnd = False
-                testpairs = TestPair.objects.filter(tset = tset[0])
-                testpair_length = testpairs.count()
-                if(testpair_length != 0):
-                    data["paper"]["questions"] = [0 for i in range(testpair_length)]
-                    for i in range(testpair_length):
-                        qapair = QAPair.objects.filter(qaset = qaset, index = testpair[i].pair.index)
-                        serializer = QAPairSerializer(qapair, many=True)
+            
+                data["paper"]["isStart"] = isStart
+                data["paper"]["isEnd"] = isEnd
+
+                qapairs = QAPair.objects.filter(qaset = qaset)
+                qapair_length = qapairs.count()
+                serializer = QAPairSerializer(qapairs, many=True)
+                if(qapair_length != 0):
+                    data["paper"]["questions"] = [0 for i in range(qapair_length)]
+                    for i in range(qapair_length):
                         data["paper"]["questions"][i] = OrderedDict()
-                        data["paper"]["questions"][i]["id"] = serializer.data[0]['url_id']#이부분 qapair의 url_id 어떻게 뽑아낼래?
-                        data["paper"]["questions"][i]["quiz"] = testpair[i].pair.question
-                        data["paper"]["questions"][i]["answer"] = testpair[i].pair.answer
-                        data["paper"]["questions"][i]["user_answer"] = testpair[i].user_answer
-                        data["paper"]["questions"][i]["answer_set"] = testpair[i].pair.answer_set
+                        data["paper"]["questions"][i]["id"] = serializer.data[i]['url_id']
+                        data["paper"]["questions"][i]["quiz"] = qapairs[i].question
+                        data["paper"]["questions"][i]["answer"] = qapairs[i].answer
+                        if(test.exists()):
+                            testplan = TestPlan.objects.get(qaset = qaset)
+                            testset = TestSet.objects.get(user = user, test = testplan)
+                            data["paper"]["questions"][i]["user_answer"] = TestPair.objects.get(tset = testset, pair = qapairs[i]).user_answer
+                        else:
+                            data["paper"]["questions"][i]["user_answer"] = ""
+                        data["paper"]["questions"][i]["answer_set"] = qapairs[i].answer_set
                         data["paper"]["questions"][i]["verified"] = True
                 else:
                     data["paper"]["questions"] = []
-            else:
-                isStart = False
-                isEnd = False
-                data["paper"]["questions"] = []
             
+            
+            
+            
+            
+            if(user_type == "runner"):
+                if(test.exists()):
+                    isStart = test[0].test.released
+                    tset = TestSet.objects.filter(user = user, test = test[0].test)
+                    if(tset.exists()):
+                        isEnd = tset[0].submitted
+                    else:
+                        isEnd = False
+                    testpairs = TestPair.objects.filter(tset = tset[0])
+                    testpair_length = testpairs.count()
+                    if(testpair_length != 0):
+                        data["paper"]["questions"] = [0 for i in range(testpair_length)]
+                        for i in range(testpair_length):
+                            qapair = QAPair.objects.filter(qaset = qaset, index = testpair[i].pair.index)
+                            serializer = QAPairSerializer(qapair, many=True)
+                            data["paper"]["questions"][i] = OrderedDict()
+                            data["paper"]["questions"][i]["id"] = serializer.data[0]['url_id']#이부분 qapair의 url_id 어떻게 뽑아낼래?
+                            data["paper"]["questions"][i]["quiz"] = testpair[i].pair.question
+                            data["paper"]["questions"][i]["answer"] = testpair[i].pair.answer
+                            data["paper"]["questions"][i]["user_answer"] = testpair[i].user_answer
+                            data["paper"]["questions"][i]["answer_set"] = testpair[i].pair.answer_set
+                            data["paper"]["questions"][i]["verified"] = True
+                    else:
+                        data["paper"]["questions"] = []
+                else:
+                    isStart = False
+                    isEnd = False
+                    data["paper"]["questions"] = []
+ 
             data["paper"]["isStart"] = isStart
             data["paper"]["isEnd"] = isEnd
-
-            '''
-            qapairs = QAPair.objects.filter(qaset = qaset)
-            qapair_length = qapairs.count()
-            serializer = QAPairSerializer(qapairs, many=True)
-            if(qapair_length != 0):
-                data["paper"]["questions"] = [0 for i in range(qapair_length)]
-                for i in range(qapair_length):
-                    data["paper"]["questions"][i] = OrderedDict()
-                    data["paper"]["questions"][i]["id"] = serializer.data[i]['url_id']
-                    data["paper"]["questions"][i]["quiz"] = qapairs[i].question
-                    data["paper"]["questions"][i]["answer"] = qapairs[i].answer
-                    if(test.exists()):
-                        testplan = TestPlan.objects.get(qaset = qaset)
-                        testset = TestSet.objects.get(user = user, test = testplan)
-                        data["paper"]["questions"][i]["user_answer"] = TestPair.objects.get(tset = testset, pair = qapairs[i]).user_answer
-                    else:
-                        data["paper"]["questions"][i]["user_answer"] = ""
-                    data["paper"]["questions"][i]["answer_set"] = qapairs[i].answer_set
-                    data["paper"]["questions"][i]["verified"] = True
-            else:
-                 data["paper"]["questions"] = []
-            '''
 
         else:
             data["paper"]["isStart"] = False
