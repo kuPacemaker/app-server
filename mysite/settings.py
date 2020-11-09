@@ -10,7 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/1.11/ref/settings/
 """
 
-import os, json
+import os, json, logging
 
 with open('mysite/secret.json','r',encoding='utf-8') as secret:
     SECRET = json.load(secret)
@@ -28,6 +28,27 @@ SECRET_KEY = SECRET['SECRET_KEY']
 CSRF_COOKIE_SECURE = True
 
 SESSION_COOKIE_SECURE = True
+
+#get logger
+logging = logging.getLogger('default')
+LOGGING = {
+    'version':1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'file': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': 'debug.log',
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['file'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+    },
+}
 
 
 # SECURITY WARNING: don't run with debug turned on in production!
