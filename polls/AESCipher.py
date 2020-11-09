@@ -1,6 +1,7 @@
 import base64
 from Crypto import Random
 from Crypto.Cipher import AES
+from mysite.settings import SECRET
 
 BS = 16
 pad = lambda s: s + (BS - len(s) % BS) * chr(BS - len(s) % BS)
@@ -8,7 +9,7 @@ unpad = lambda s: s[0:-s[-1]]
 
 class AESCipher:
     def __init__(self):
-        self.key = '!01234!5678998765!43210!'
+        self.key = SECRET['ENCRYPTION_KEY']
 
     def encrypt(self, raw):
         raw = pad(raw)

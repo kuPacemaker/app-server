@@ -29,7 +29,7 @@ SECRET_KEY = SECRET['SECRET_KEY']
 DEBUG = True
 
 ALLOWED_HOSTS = [
-    'ku.pacemaker.io'
+    '117.16.136.171'
 ]
 
 AUTH_USER_MODEL='polls.User'
