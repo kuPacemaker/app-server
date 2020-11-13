@@ -34,6 +34,12 @@ logging = logging.getLogger('default')
 LOGGING = {
     'version':1,
     'disable_existing_loggers': False,
+    'formatters': {
+        'format1':{
+            'format': '[%(asctime)s] %(levelname)s [%(name)s:%(lineno)s] %(message)s',
+            'datefmt': '%d\%b\%Y %H:%M:%S',
+        },
+    },
     'handlers': {
         'file': {
             'level': 'DEBUG',
