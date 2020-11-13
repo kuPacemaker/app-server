@@ -45,6 +45,7 @@ LOGGING = {
             'level': 'DEBUG',
             'class': 'logging.FileHandler',
             'filename': 'debug.log',
+            'formatter': 'format1',
         },
     },
     'loggers': {
