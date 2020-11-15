@@ -64,7 +64,8 @@ DEBUG = False
 ALLOWED_HOSTS = [
     '117.16.136.171',
     'kupacemaker.github.io',
-    '127.0.0.1'
+    '127.0.0.1',
+    'localhost:3000'
 ]
 
 AUTH_USER_MODEL='polls.User'
